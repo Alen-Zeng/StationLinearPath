@@ -46,32 +46,38 @@ typedef struct _VisionPackStructdef
 class SLPClassdef
 {
 private:
-  float VisionT[3][4];
+  float visionT[3][4];
   float TWorldGoal[3][4];
   float TGoalWorld[3][4];
-  float SafeR;
-  float EndEffWorld[3];
-  float EndEffGoal[3];
-  float O[3];
-  float P[3];
-  float Q[3];
-  float N[3];
-  float R[3];
-  float S[3];
-  float T[3];
-  float U[3];
-  float G[3];   //目标点xyz
-  float Mid[3]; //中间点xyz
+  float endEffWorld[3];
+  float endEffGoal[3];
+  /* 在Goal坐标系下 */
+  float O[3] = {0.288 + safeR, 0.144 + safeR, -0.144 - safeR};
+  float P[3] = {0 - safeR, 0.144 + safeR, -0.144 - safeR};
+  float Q[3] = {0 - safeR, -0.144 - safeR, -0.144 - safeR};
+  float N[3] = {0.288 + safeR, -0.144 - safeR, -0.144 - safeR};
+  float R[3] = {0.288 + safeR, 0.144 + safeR, 0.144 + safeR};
+  float S[3] = {0 - safeR, 0.144 + safeR, 0.144 + safeR};
+  float T[3] = {0 - safeR, -0.144 - safeR, 0.144 + safeR};
+  float U[3] = {0.288 + safeR, -0.144 - safeR, 0.144 + safeR};
+  float G[3] = {-safeR, 0, 0};    // 目标点xyz
+  /* ↑↑在Goal坐标系下 */
+  float midWorld[3];                   // 中间点xyz
 
-  void QuaCoord2TMatrix(float qx,float qy,float qz,float qw,float x,float y,float z,float TMat[3][4]);
+  void quaCoord2TMatrix(float qx,float qy,float qz,float qw,float x,float y,float z,float TMat[3][4]);
+  void endEffLocCal(float yaw,float pitch,float roll);
+  bool limitCheck(float point[3]);
 public:
+  float safeR = 0.2;
   bool CalSuccess = false;
 
   SLPClassdef(){};
   ~SLPClassdef(){};
 
-  void recVisionTarget(VisionPackStructdef visionPack);
+  void recVisionTarget(VisionPackStructdef &visionPack);
   uint8_t decSurfaceCal(float endEffGoal[3]);
+  void midPointGenerate(float mid[3]);
+  bool xyzTracGenerate(float point[3],float &lift, float &extend, float &translate);
 };
 
 
