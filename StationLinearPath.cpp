@@ -47,6 +47,13 @@
 
 /* function prototypes -------------------------------------------------------*/
 
-
+/**
+ * @brief 接收视觉四元数数据，并转换为旋转矩阵
+ * 
+ * @param visionPack 
+ */
+void SLPClassdef::recVisionTarget(VisionPackStructdef visionPack)
+{
+}
 
 /************************ COPYRIGHT(C) SCUT-ROBOTLAB **************************/

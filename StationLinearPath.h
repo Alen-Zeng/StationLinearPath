@@ -18,11 +18,8 @@
   */
 #pragma once
 
-// #ifdef __cplusplus
-// extern "C"{
-// #endif
 /* Includes ------------------------------------------------------------------*/
-
+#include "stdint.h"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private type --------------------------------------------------------------*/
@@ -31,12 +28,54 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-/* Exported function declarations --------------------------------------------*/
+#pragma pack(1)
+typedef struct _VisionPackStructdef
+{
+  uint8_t visionMode;
+  float qx;
+  float qy;
+  float qz;
+  float qw;
+  float x;
+  float y;
+  float z;
+}VisionPackStructdef;
+#pragma pack()
+
+
+class SLPClassdef
+{
+private:
+  float VisionT[4][4];
+  float TWorldGoal[4][4];
+  float TGoalWorld[4][4];
+  float SafeR;
+  float EndEffWorld[3];
+  float EndEffGoal[3];
+  float O[3];
+  float P[3];
+  float Q[3];
+  float N[3];
+  float R[3];
+  float S[3];
+  float T[3];
+  float U[3];
+  float G[3];   //目标点xyz
+  float Mid[3]; //中间点xyz
+
+  void QuaCoord2TMatrix(float qx,float qy,float qz,float qw,float x,float y,float z,float RotMat[4][4]);
+public:
+  bool CalSuccess;
+
+  SLPClassdef(){};
+  ~SLPClassdef(){};
+
+  void recVisionTarget(VisionPackStructdef visionPack);
+  uint8_t decSurfaceCal(float endEffGoal[3]);
+};
 
 
 
-// #ifdef  __cplusplus
-// }
-// #endif
+
 
 /************************ COPYRIGHT(C) SCUT-ROBOTLAB **************************/
