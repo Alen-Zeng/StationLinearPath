@@ -46,9 +46,9 @@ typedef struct _VisionPackStructdef
 class SLPClassdef
 {
 private:
-  float VisionT[4][4];
-  float TWorldGoal[4][4];
-  float TGoalWorld[4][4];
+  float VisionT[3][4];
+  float TWorldGoal[3][4];
+  float TGoalWorld[3][4];
   float SafeR;
   float EndEffWorld[3];
   float EndEffGoal[3];
@@ -63,9 +63,9 @@ private:
   float G[3];   //目标点xyz
   float Mid[3]; //中间点xyz
 
-  void QuaCoord2TMatrix(float qx,float qy,float qz,float qw,float x,float y,float z,float RotMat[4][4]);
+  void QuaCoord2TMatrix(float qx,float qy,float qz,float qw,float x,float y,float z,float TMat[3][4]);
 public:
-  bool CalSuccess;
+  bool CalSuccess = false;
 
   SLPClassdef(){};
   ~SLPClassdef(){};
