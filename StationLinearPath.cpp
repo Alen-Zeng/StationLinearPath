@@ -202,8 +202,8 @@ uint8_t SLPClassdef::decSurfaceCal(float endEffGoal[3])
  */
 void SLPClassdef::midPointCal()
 {
-  uint8_t surfaceRes = decSurfaceCal(G);
   static float midGoal[3] = {0};
+  uint8_t surfaceRes = decSurfaceCal(endEffGoal);
   switch (surfaceRes)
   {
   case 1:       //前表面
