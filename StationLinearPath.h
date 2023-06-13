@@ -48,15 +48,15 @@ private:
   float midWorld[3];              // 中间点xyz
   float goalWorld[3];              // 目标点xyz
   /* 在Goal坐标系下 */
-  float O[3] = {0.288 + safeR, 0.144 + safeR, -0.144 - safeR};
-  float P[3] = {0 - safeR, 0.144 + safeR, -0.144 - safeR};
-  float Q[3] = {0 - safeR, -0.144 - safeR, -0.144 - safeR};
-  float N[3] = {0.288 + safeR, -0.144 - safeR, -0.144 - safeR};
-  float R[3] = {0.288 + safeR, 0.144 + safeR, 0.144 + safeR};
-  float S[3] = {0 - safeR, 0.144 + safeR, 0.144 + safeR};
-  float T[3] = {0 - safeR, -0.144 - safeR, 0.144 + safeR};
-  float U[3] = {0.288 + safeR, -0.144 - safeR, 0.144 + safeR};
-  float G[3] = {-safeR, 0, 0};    // 目标点xyz
+  float O[3] = {0.288f + safeR, 0.144f + safeR, -0.144f - safeR};
+  float P[3] = {0.0f - safeR, 0.144f + safeR, -0.144f - safeR};
+  float Q[3] = {0.0f - safeR, -0.144f - safeR, -0.144f - safeR};
+  float N[3] = {0.288f + safeR, -0.144f - safeR, -0.144f - safeR};
+  float R[3] = {0.288f + safeR, 0.144f + safeR, 0.144f + safeR};
+  float S[3] = {0.0f - safeR, 0.144f + safeR, 0.144f + safeR};
+  float T[3] = {0.0f - safeR, -0.144f - safeR, 0.144f + safeR};
+  float U[3] = {0.288f + safeR, -0.144f - safeR, 0.144f + safeR};
+  float G[3] = {-safeR, 0.0f, 0.0f};    // 目标点xyz
   /* ↑↑在Goal坐标系下 */
   float MidxyzTrac[3];            //lift--extend--translate
   float GoalxyzTrac[3];           //lift--extend--translate

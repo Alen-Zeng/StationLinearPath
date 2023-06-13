@@ -97,7 +97,6 @@ bool SLPClassdef::Calculate()
 
   /* 计算中间点 */
   endEffLocCal();
-  decSurfaceCal(endEffGoal);
   midPointCal();
   xyzTracGene(midWorld,MidxyzTrac[0],MidxyzTrac[1],MidxyzTrac[2]);
   /* 判断中间点是否超限 */
