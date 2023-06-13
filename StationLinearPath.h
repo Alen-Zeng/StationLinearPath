@@ -20,12 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stdint.h"
-/* Private macros ------------------------------------------------------------*/
-
-/* Private type --------------------------------------------------------------*/
-
-/* Exported macros -----------------------------------------------------------*/
-
 /* Exported types ------------------------------------------------------------*/
 
 #pragma pack(1)
@@ -84,9 +78,6 @@ public:
   void getMidxyzTrac(float &lift, float &extend, float &translate);
   void getGoalxyzTrac(float &lift, float &extend, float &translate);
 };
-
-
-
 
 
 /************************ COPYRIGHT(C) SCUT-ROBOTLAB **************************/
