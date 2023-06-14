@@ -55,9 +55,15 @@
  */
 void SLPClassdef::quaCoord2TMatrix(float qx, float qy, float qz, float qw, float x, float y, float z, float TMat[3][4])
 {
-  TMat[0][0] = 1 - 2 * qy * qy - 2 * qz * qz;     TMat[0][1] = 2 * qx * qy - 2 * qz * qw;       TMat[0][2] = 2 * qx * qz + 2 * qy * qw;       TMat[0][3] = x;
-  TMat[1][0] = 2 * qx * qy + 2 * qz * qw;         TMat[1][1] = 1 - 2 * qx * qx - 2 * qz * qz;   TMat[1][2] = 2 * qy * qz - 2 * qx * qw;       TMat[1][3] = y;
-  TMat[2][0] = 2 * qx * qz - 2 * qy * qw;         TMat[2][1] = 2 * qy * qz + 2 * qx * qw;       TMat[2][2] = 1 - 2 * qx * qx - 2 * qy * qy;   TMat[2][3] = z;
+  float norm = sqrtf(qx * qx + qy * qy + qz * qz + qw * qw);
+  float qxn = qx/norm;
+  float qyn = qy/norm;
+  float qzn = qz/norm;
+  float qwn = qw/norm;
+
+  TMat[0][0] = 1 - 2 * qyn * qyn - 2 * qzn * qzn;     TMat[0][1] = 2 * qxn * qyn - 2 * qzn * qwn;       TMat[0][2] = 2 * qxn * qzn + 2 * qyn * qwn;       TMat[0][3] = x;
+  TMat[1][0] = 2 * qxn * qyn + 2 * qzn * qwn;         TMat[1][1] = 1 - 2 * qxn * qxn - 2 * qzn * qzn;   TMat[1][2] = 2 * qyn * qzn - 2 * qxn * qwn;       TMat[1][3] = y;
+  TMat[2][0] = 2 * qxn * qzn - 2 * qyn * qwn;         TMat[2][1] = 2 * qyn * qzn + 2 * qxn * qwn;       TMat[2][2] = 1 - 2 * qxn * qxn - 2 * qyn * qyn;   TMat[2][3] = z;
 }
 
 /**
@@ -246,7 +252,7 @@ void SLPClassdef::midPointCal()
 
 /**
  * @brief 产生平移轨迹
- * @note TODO常数项需要微调
+ * @note TODO计算公式需要调整，结合小三轴
  * @param point 世界坐标系下的x--y--z
  * @param lift 
  * @param extend 
