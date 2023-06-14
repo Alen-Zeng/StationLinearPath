@@ -82,9 +82,9 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
   goalWorld[1] = TWorldGoal[1][3];
   goalWorld[2] = TWorldGoal[2][3];
 
-  TGoalWorld[0][0] = visionT[2][2];   TGoalWorld[0][1] = -visionT[0][2];    TGoalWorld[0][2] = -visionT[1][2];     TGoalWorld[0][3] = visionT[1][3] * visionT[0][2] - visionT[0][3] * visionT[2][2] + visionT[2][3] * visionT[1][2];
-  TGoalWorld[1][0] = -visionT[2][0];   TGoalWorld[1][1] = visionT[0][0];    TGoalWorld[1][2] = visionT[1][0];     TGoalWorld[1][3] = visionT[0][3] * visionT[2][0] - visionT[1][3] * visionT[0][0] - visionT[2][3] * visionT[1][0];
-  TGoalWorld[2][0] = -visionT[2][1];   TGoalWorld[2][1] = visionT[0][1];    TGoalWorld[2][2] = visionT[1][1];     TGoalWorld[2][3] = visionT[0][3] * visionT[2][1] - visionT[1][3] * visionT[0][1] - visionT[2][3] * visionT[1][1];
+  TGoalWorld[0][0] = visionT[2][2];   TGoalWorld[0][1] = -visionT[0][2];    TGoalWorld[0][2] = -visionT[1][2];    TGoalWorld[0][3] = -visionT[0][3] * visionT[0][2] - visionT[1][3] * visionT[1][2] - visionT[2][3] * visionT[2][2];
+  TGoalWorld[1][0] = -visionT[2][0];   TGoalWorld[1][1] = visionT[0][0];    TGoalWorld[1][2] = visionT[1][0];     TGoalWorld[1][3] = visionT[0][3] * visionT[0][0] - visionT[1][3] * visionT[1][0] - visionT[2][3] * visionT[2][0];
+  TGoalWorld[2][0] = -visionT[2][1];   TGoalWorld[2][1] = visionT[0][1];    TGoalWorld[2][2] = visionT[1][1];     TGoalWorld[2][3] = visionT[0][3] * visionT[0][1] - visionT[1][3] * visionT[1][1] - visionT[2][3] * visionT[2][1];
 }
 
 
