@@ -20,6 +20,7 @@
       -# 使用方法：
           1. 循环调用recVisionTarget和Calculate，接收Calculate返回的结果判断
           2. 如果Calculate返回的结果为true，此时可以调用getMidxyzTrac和getGoalxyzTrac获取轨迹点数据，并执行
+      -# 代码涉及较多的符号，请参考代码配套的说明文档
     @warning
       -# 如果Calculate返回的结果为false，请勿调用getMidxyzTrac和getGoalxyzTrac，否则会获得错误数据
       -# 
@@ -85,8 +86,27 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
   TGoalWorld[0][0] = visionT[2][2];   TGoalWorld[0][1] = -visionT[0][2];    TGoalWorld[0][2] = -visionT[1][2];    TGoalWorld[0][3] = -visionT[0][3] * visionT[0][2] - visionT[1][3] * visionT[1][2] - visionT[2][3] * visionT[2][2];
   TGoalWorld[1][0] = -visionT[2][0];   TGoalWorld[1][1] = visionT[0][0];    TGoalWorld[1][2] = visionT[1][0];     TGoalWorld[1][3] = visionT[0][3] * visionT[0][0] + visionT[1][3] * visionT[1][0] + visionT[2][3] * visionT[2][0];
   TGoalWorld[2][0] = -visionT[2][1];   TGoalWorld[2][1] = visionT[0][1];    TGoalWorld[2][2] = visionT[1][1];     TGoalWorld[2][3] = visionT[0][3] * visionT[0][1] + visionT[1][3] * visionT[1][1] + visionT[2][3] * visionT[2][1];
+
 }
 
+/**
+ * @brief 小三轴姿态计算
+ * 
+ */
+void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
+{
+  pitch = acosf(TWorldGoal[0][0]);
+  if (pitch != 0)
+  {
+    yaw = atan2f(TWorldGoal[0][1] / sinf(pitch), TWorldGoal[0][2] / sinf(pitch));
+    roll = atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
+  }
+  else
+  {
+    roll = 0;
+    yaw = atan2f(TWorldGoal[2][1], -TWorldGoal[2][2]);
+  }
+}
 
 /**
  * @brief 计算轨迹点
@@ -107,6 +127,20 @@ bool SLPClassdef::Calculate()
   xyzTracGene(midWorld,MidxyzTrac[0],MidxyzTrac[1],MidxyzTrac[2]);
   /* 判断中间点是否超限 */
   return  limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+}
+
+/**
+ * @brief 获取小三轴姿态
+ * 
+ * @param _pitch 
+ * @param _yaw 
+ * @param _roll 
+ */
+void SLPClassdef::getAttitude(float &_yaw, float &_pitch, float &_roll)
+{
+  _pitch = pitch;
+  _yaw = yaw;
+  _roll = roll;
 }
 
 /**
@@ -140,19 +174,20 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
 
 /**
  * @brief 解算出小三轴末端相对于兑换站的xyz位置
- * @note 考虑到小三轴的位移很小，先试试不考虑小三轴末端的位移
+ * 
  * @param yaw 
  * @param pitch 
  * @param roll 
  */
-void SLPClassdef::endEffLocCal(float yaw, float pitch, float roll)
+void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
-  /* 考虑小三轴位移 */
-  /* code */
-  /* 不考虑小三轴位移 TODO应该根据动作组移动到一个确定的位置 */
-  endEffWorld[0] = 1;
-  endEffWorld[1] = 1;
-  endEffWorld[2] = 1;
+  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
+  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
+  float x3 = 0;                 // pitch--roll
+  /* 考虑小三轴位移 TODO 第一个常数项为3个平移常数项，需要结合动作组调整 */
+  endEffWorld[0] = 1 + x1 + x2 + x3 * cosf(_pitch);
+  endEffWorld[1] = 1 + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
+  endEffWorld[2] = 1 + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
 
   endEffGoal[0] = endEffWorld[0]*TGoalWorld[0][0]+endEffWorld[1]*TGoalWorld[0][1]+endEffWorld[2]*TGoalWorld[0][2]+TGoalWorld[0][3];
   endEffGoal[1] = endEffWorld[0]*TGoalWorld[1][0]+endEffWorld[1]*TGoalWorld[1][1]+endEffWorld[2]*TGoalWorld[1][2]+TGoalWorld[1][3];
