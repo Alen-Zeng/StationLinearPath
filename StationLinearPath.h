@@ -41,9 +41,10 @@ typedef struct _VisionPackStructdef
 class SLPClassdef
 {
 private:
-  float pitch; // 小三轴pitch目标
-  float yaw;   // 小三轴yaw目标
-  float roll;  // 小三轴roll目标
+  /* 小三轴变换矩阵中用到的常数 */
+  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
+  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
+  float x3 = 0;                 // pitch--roll
 
   float visionT[3][4];    // 视觉旋转矩阵与位置
   float TWorldGoal[3][4]; // 世界坐标系描述兑换站坐标系
@@ -63,7 +64,7 @@ private:
   float U[3] = {0.288f + safeR, -0.144f - safeR, 0.144f + safeR};
   float G[3] = {-safeR, 0.0f, 0.0f}; // 目标点xyz
   /* ↑↑在Goal坐标系下 */
-  float AttiTrac[3];    //yaw--pitch--roll
+  float AttiTrac[3];    //小三轴yaw--pitch--roll目标
   float MidxyzTrac[3];  // lift--extend--translate
   float GoalxyzTrac[3]; // lift--extend--translate
 
@@ -83,7 +84,7 @@ public:
 
   void recVisionTarget(VisionPackStructdef &visionPack);
   bool Calculate();
-  void getAttitude(float &_yaw, float &_pitch, float &_roll);
+  void getAttitudeTrac(float &_yaw, float &_pitch, float &_roll);
   void getMidxyzTrac(float &lift, float &extend, float &translate);
   void getGoalxyzTrac(float &lift, float &extend, float &translate);
 };

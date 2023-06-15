@@ -136,11 +136,11 @@ bool SLPClassdef::Calculate()
  * @param _yaw 
  * @param _roll 
  */
-void SLPClassdef::getAttitude(float &_yaw, float &_pitch, float &_roll)
+void SLPClassdef::getAttitudeTrac(float &_yaw, float &_pitch, float &_roll)
 {
-  _pitch = pitch;
-  _yaw = yaw;
-  _roll = roll;
+  _yaw = AttiTrac[0];
+  _pitch = AttiTrac[1];
+  _roll = AttiTrac[2];
 }
 
 /**
@@ -181,9 +181,6 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
  */
 void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
-  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
-  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
-  float x3 = 0;                 // pitch--roll
   /* 考虑小三轴位移 TODO 第一个常数项为3个平移常数项，需要结合动作组调整 */
   endEffWorld[0] = 1 + x1 + x2 + x3 * cosf(_pitch);
   endEffWorld[1] = 1 + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
@@ -287,7 +284,7 @@ void SLPClassdef::midPointCal()
 
 /**
  * @brief 产生平移轨迹
- * @note TODO计算公式需要调整，结合小三轴
+ * 
  * @param point 世界坐标系下的x--y--z
  * @param lift 
  * @param extend 
@@ -297,14 +294,15 @@ void SLPClassdef::midPointCal()
  */
 void SLPClassdef::xyzTracGene(float point[3], float &lift, float &extend, float &translate)
 {
-  lift = point[2] - 0.1f;
-  extend = point[0] - 0.5f;
-  translate = point[1] + 0.2f;
+  /* TODO 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
+  lift = point[2] - 0.1f - x1 + x2 + x3 * cosf(AttiTrac[1]);
+  extend = point[0] - 0.5f - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sin(AttiTrac[1]) * sinf(AttiTrac[0]);
+  translate = point[1] + 0.2f - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
 }
 
 /**
  * @brief 判断关节位置有无超限
- * @note TODO 关节限位需要微调
+ * @note TODO 关节限位需要微调，需要添加yawpitchroll的检查
  * @param lift 
  * @param extend 
  * @param translate 
