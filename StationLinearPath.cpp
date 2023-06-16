@@ -54,6 +54,35 @@
 #define Degrees(radians) ((radians)*180.0f / PI)  //弧度转角度
 #endif
 
+SLPClassdef::SLPClassdef(SLPConstantStructdef &_SLPCon) 
+{
+  /* 关节限位参数 */
+  liftMin = _SLPCon.liftMin;
+  liftMax = _SLPCon.liftMax;
+  extendMin = _SLPCon.extendMin;
+  extendMax = _SLPCon.extendMax;
+  translateMin = _SLPCon.translateMin;
+  translateMax = _SLPCon.translateMax;
+  yawMin = _SLPCon.yawMin;
+  yawMax = _SLPCon.yawMax;
+  pitchMin = _SLPCon.pitchMin;
+  pitchMax = _SLPCon.pitchMax;
+  rollMin = _SLPCon.rollMin;
+  rollMax = _SLPCon.rollMax;
+  /* 小三轴变换矩阵中用到的常数 */
+  x1 = _SLPCon.x1, y1 = _SLPCon.y1, z1 = _SLPCon.z1; // translate--yaw
+  x2 = _SLPCon.x2, y2 = _SLPCon.y2, z2 = _SLPCon.z2; // yaw--pitch
+  x3 = _SLPCon.x3;                                   // pitch--roll
+  /* 平移机构坐标原点与世界坐标原点的误差 */
+  errx = _SLPCon.errx;
+  erry = _SLPCon.erry;
+  errz = _SLPCon.errz;
+  /* 视觉兑换自动组的平移常数项 */
+  autoConx = _SLPCon.autoConx;
+  autoCony = _SLPCon.autoCony;
+  autoConz = _SLPCon.autoConz;
+}
+
 /**
  * @brief 四元数与xyz坐标转齐次变换矩阵
  * 
@@ -201,9 +230,9 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
 void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
   /* 考虑小三轴位移 TODO 第一个常数项为3个平移常数项，需要结合动作组调整 */
-  endEffWorld[0] = 1 + x1 + x2 + x3 * cosf(_pitch);
-  endEffWorld[1] = 1 + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
-  endEffWorld[2] = 1 + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
+  endEffWorld[0] = autoConx + x1 + x2 + x3 * cosf(_pitch);
+  endEffWorld[1] = autoCony + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
+  endEffWorld[2] = autoConz + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
 
   endEffGoal[0] = endEffWorld[0]*TGoalWorld[0][0]+endEffWorld[1]*TGoalWorld[0][1]+endEffWorld[2]*TGoalWorld[0][2]+TGoalWorld[0][3];
   endEffGoal[1] = endEffWorld[0]*TGoalWorld[1][0]+endEffWorld[1]*TGoalWorld[1][1]+endEffWorld[2]*TGoalWorld[1][2]+TGoalWorld[1][3];
@@ -313,10 +342,10 @@ void SLPClassdef::midPointCal()
  */
 void SLPClassdef::xyzTracGene(float point[3], float &lift, float &extend, float &translate)
 {
-  /* TODO 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
-  extend = point[0] - 0.5f - x1 + x2 + x3 * cosf(AttiTrac[1]);
-  translate = point[1] + 0.2f - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sinf(AttiTrac[1]) * sinf(AttiTrac[0]);
-  lift = point[2] - 0.1f - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
+  /* 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
+  extend = point[0] - errx - x1 + x2 + x3 * cosf(AttiTrac[1]);
+  translate = point[1] - erry - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sinf(AttiTrac[1]) * sinf(AttiTrac[0]);
+  lift = point[2] - errz - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
 }
 
 /**
@@ -328,11 +357,14 @@ void SLPClassdef::xyzTracGene(float point[3], float &lift, float &extend, float 
  * @return true 
  * @return false 
  */
-bool SLPClassdef::limitCheck(float &lift, float &extend, float &translate)
+bool SLPClassdef::limitCheck(float &_lift, float &_extend, float &_translate, float &_yaw, float &_pitch, float &_roll)
 {
-  if(0.0f <= lift      && lift      <= 0.61f
-  && 0.0f <= extend    && extend    <= 0.339f
-  && 0.0f <= translate && translate <= 0.348f)
+  if(liftMin      <= _lift        && _lift      <= liftMax
+  && extendMin    <= _extend      && _extend    <= extendMax
+  && translateMax <= _translate   && _translate <= translateMax
+  && yawMin       <= _yaw         && _yaw       <= yawMax
+  && pitchMin     <= _pitch       && _pitch     <= pitchMax
+  && rollMin      <= _roll        && _roll      <= rollMax)
   {
     return true;
   }

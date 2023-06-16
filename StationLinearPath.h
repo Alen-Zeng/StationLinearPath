@@ -37,14 +37,64 @@ typedef struct _VisionPackStructdef
 }VisionPackStructdef;
 #pragma pack()
 
-
-class SLPClassdef
+typedef struct _SLPConstantStructdef
 {
-private:
+  /* 关节限位参数 */
+  float liftMin;
+  float liftMax;
+  float extendMin;
+  float extendMax;
+  float translateMin;
+  float translateMax;
+  float yawMin;
+  float yawMax;
+  float pitchMin;
+  float pitchMax;
+  float rollMin;
+  float rollMax;
   /* 小三轴变换矩阵中用到的常数 */
   float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
   float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
   float x3 = 0;                 // pitch--roll
+  /* 平移机构坐标原点与世界坐标原点的误差 */
+  float errx;
+  float erry;
+  float errz;
+  /* 视觉兑换自动组的平移常数项 */
+  float autoConx;
+  float autoCony;
+  float autoConz;
+}SLPConstantStructdef;
+
+class SLPClassdef
+{
+private:
+  /* 关节限位参数 */
+  float liftMin;
+  float liftMax;
+  float extendMin;
+  float extendMax;
+  float translateMin;
+  float translateMax;
+  float yawMin;
+  float yawMax;
+  float pitchMin;
+  float pitchMax;
+  float rollMin;
+  float rollMax;
+  /* 小三轴变换矩阵中用到的常数 */
+  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
+  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
+  float x3 = 0;                 // pitch--roll
+  /* 平移机构坐标原点与世界坐标原点的误差 */
+  float errx;
+  float erry;
+  float errz;
+  /* 视觉兑换自动组的平移常数项 */
+  float autoConx;
+  float autoCony;
+  float autoConz;
+
 
   float visionT[3][4];    // 视觉旋转矩阵与位置
   float TWorldGoal[3][4]; // 世界坐标系描述兑换站坐标系
@@ -74,12 +124,12 @@ private:
   uint8_t decSurfaceCal(float endEffGoal[3]);
   void midPointCal();
   void xyzTracGene(float point[3], float &lift, float &extend, float &translate);
-  bool limitCheck(float &lift, float &extend, float &translate);
+  bool limitCheck(float &_lift, float &_extend, float &_translate, float &_yaw, float &_pitch, float &_roll);
 
 public:
-  float safeR = 0.2;
+  float safeR = 0.2;  //安全距离
 
-  SLPClassdef(){};
+  SLPClassdef(SLPConstantStructdef &_SLPCon);
   ~SLPClassdef(){};
 
   void recVisionTarget(VisionPackStructdef &visionPack);
