@@ -159,8 +159,8 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
 /**
  * @brief 计算轨迹点 TODO
  * 
- * @return true 
- * @return false 
+ * @return true 轨迹生成成功
+ * @return false 轨迹生成失败
  */
 bool SLPClassdef::Calculate()
 {
@@ -172,7 +172,8 @@ bool SLPClassdef::Calculate()
 
   /* 计算中间点 */
   endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-  midPointCal();
+  /* 如果中间点无解，直接返回错误 */
+  if(!midPointCal()) return false;
   xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
   /* 判断中间点是否超限 */
   return limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]);
@@ -230,7 +231,7 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
  */
 void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
-  /* 考虑小三轴位移 TODO 第一个常数项为3个平移常数项，需要结合动作组调整 */
+  /* 考虑小三轴位移, 第一个常数项为3个平移常数项，需要结合动作组调整 */
   endEffWorld[0] = autoConx + x1 + x2 + x3 * cosf(_pitch);
   endEffWorld[1] = autoCony + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
   endEffWorld[2] = autoConz + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
@@ -285,9 +286,10 @@ uint8_t SLPClassdef::decSurfaceCal(float endEffGoal[3])
 /**
  * @brief 根据面决策结果生成中间点，中间点由世界坐标系描述
  * 
- * @param mid 
+ * @return true 中间点有解
+ * @return false 中间点无解
  */
-void SLPClassdef::midPointCal()
+bool SLPClassdef::midPointCal()
 {
   static float midGoal[3] = {0};
   uint8_t surfaceRes = decSurfaceCal(endEffGoal);
@@ -320,6 +322,7 @@ void SLPClassdef::midPointCal()
     break;
   
   default:
+    return false;
     break;
   }
 
@@ -329,6 +332,7 @@ void SLPClassdef::midPointCal()
     midWorld[1] = TWorldGoal[1][0] * midGoal[0] + TWorldGoal[1][1] * midGoal[1] + TWorldGoal[1][2] * midGoal[2] + TWorldGoal[1][3];
     midWorld[2] = TWorldGoal[2][0] * midGoal[0] + TWorldGoal[2][1] * midGoal[1] + TWorldGoal[2][2] * midGoal[2] + TWorldGoal[2][3];
   }
+  return true;
 }
 
 /**
