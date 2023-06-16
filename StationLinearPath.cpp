@@ -104,7 +104,7 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
   else
   {
     roll = 0;
-    yaw = atan2f(TWorldGoal[2][1], -TWorldGoal[2][2]);
+    yaw = atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
   }
 }
 
