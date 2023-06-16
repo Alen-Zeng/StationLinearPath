@@ -42,6 +42,18 @@
 #include "StationLinearPath.h"
 /* function prototypes -------------------------------------------------------*/
 
+#ifndef PI
+#define PI 3.14159265358979f
+#endif
+
+#ifndef Radians
+#define Radians(degrees) ((degrees)*PI / 180.0f)  //角度转弧度
+#endif
+
+#ifndef Degrees
+#define Degrees(radians) ((radians)*180.0f / PI)  //弧度转角度
+#endif
+
 /**
  * @brief 四元数与xyz坐标转齐次变换矩阵
  * 
@@ -99,17 +111,24 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
   if (pitch != 0)
   {
     roll = atan2f(TWorldGoal[0][1] / sinf(pitch), TWorldGoal[0][2] / sinf(pitch));
-    yaw = atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
+    yaw = -atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
   }
   else
   {
     roll = 0;
-    yaw = atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
+    yaw = -atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
   }
+
+  pitch = Degrees(pitch);
+  roll = Degrees(roll);
+  if (Radians(-180.0f) <= yaw && yaw <= Radians(-90.0f))
+    yaw = Degrees(yaw) + 360.0f;
+  else
+    yaw = Degrees(yaw);
 }
 
 /**
- * @brief 计算轨迹点
+ * @brief 计算轨迹点 TODO
  * 
  * @return true 
  * @return false 
@@ -122,7 +141,7 @@ bool SLPClassdef::Calculate()
     return false;
 
   /* 计算中间点 */
-  endEffLocCal();
+  endEffLocCal(AttiTrac[0],AttiTrac[1],AttiTrac[2]);
   midPointCal();
   xyzTracGene(midWorld,MidxyzTrac[0],MidxyzTrac[1],MidxyzTrac[2]);
   /* 判断中间点是否超限 */
@@ -295,9 +314,9 @@ void SLPClassdef::midPointCal()
 void SLPClassdef::xyzTracGene(float point[3], float &lift, float &extend, float &translate)
 {
   /* TODO 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
-  lift = point[2] - 0.1f - x1 + x2 + x3 * cosf(AttiTrac[1]);
-  extend = point[0] - 0.5f - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sin(AttiTrac[1]) * sinf(AttiTrac[0]);
-  translate = point[1] + 0.2f - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
+  extend = point[0] - 0.5f - x1 + x2 + x3 * cosf(AttiTrac[1]);
+  translate = point[1] + 0.2f - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sinf(AttiTrac[1]) * sinf(AttiTrac[0]);
+  lift = point[2] - 0.1f - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
 }
 
 /**
