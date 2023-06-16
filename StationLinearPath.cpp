@@ -3,13 +3,14 @@
   * Copyright (c) 2019 - ~, SCUT-RobotLab Development Team
   * @file    StationLinearPath.cpp
   * @author  ZengXilang chenmoshaoalen@126.com
-  * @brief   
+  * @brief   SLP 兑换站线性路径规划算法
   * @date    2023/06/10 09:33:41
   * @version 1.0
   * @par Change Log:
   * <table>
   * <tr><th>Date <th>Version <th>Author <th>Description
-  * <tr><td>2022-11-01 <td> 1.0 <td>S.B. <td>Creator
+  * <tr><td>2023-6-10 <td> 1.0 <td>zxl <td>Creator
+  * <tr><td>2023-6-16 <td> 1.1 <td>zxl <td>complete,wait for simulation.
   * </table>
   *
   ==============================================================================
@@ -18,8 +19,9 @@
     @note
       -# 云台下方地面为原点，吸盘方向为x，竖直向上为z，建立机器人坐标系
       -# 使用方法：
-          1. 循环调用recVisionTarget和Calculate，接收Calculate返回的结果判断
-          2. 如果Calculate返回的结果为true，此时可以调用getMidxyzTrac和getGoalxyzTrac获取轨迹点数据，并执行
+          1. 使用结构体SLPConstantStructdef进行初始化传参
+          2. 循环调用recVisionTarget和Calculate，接收Calculate返回的结果判断
+          3. 如果Calculate返回的结果为true，此时可以调用getMidxyzTrac和getGoalxyzTrac获取轨迹点数据，并执行
       -# 代码涉及较多的符号，请参考代码配套的说明文档
     @warning
       -# 如果Calculate返回的结果为false，请勿调用getMidxyzTrac和getGoalxyzTrac，否则会获得错误数据
@@ -157,16 +159,18 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
 }
 
 /**
- * @brief 计算轨迹点 TODO
+ * @brief 计算轨迹点
  * 
  * @return true 轨迹生成成功
  * @return false 轨迹生成失败
  */
 bool SLPClassdef::Calculate()
 {
-  /* 判断终点是否超限 */
+  /* 姿态计算 */
   attitudeCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+  /* 终点计算 */
   xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+  /* 判断终点是否超限 */
   if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
     return false;
 
@@ -348,7 +352,7 @@ bool SLPClassdef::midPointCal()
  */
 void SLPClassdef::xyzTracGene(float point[3], float _attiTrac[3], float &lift, float &extend, float &translate)
 {
-  /* 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
+  /* 常数项为世界坐标原点与平移机构零点的偏差 */
   extend = point[0] - errx - x1 + x2 + x3 * cosf(_attiTrac[1]);
   translate = point[1] - erry - y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0]);
   lift = point[2] - errz - z1 + z2 * cosf(_attiTrac[0]) + y2 * sin(_attiTrac[0]) - x3 * cosf(_attiTrac[0]) * sinf(_attiTrac[1]);
@@ -356,7 +360,7 @@ void SLPClassdef::xyzTracGene(float point[3], float _attiTrac[3], float &lift, f
 
 /**
  * @brief 判断关节位置有无超限
- * @note TODO 关节限位需要微调，需要添加yawpitchroll的检查
+ * 
  * @param lift 
  * @param extend 
  * @param translate 
