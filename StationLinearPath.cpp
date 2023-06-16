@@ -98,8 +98,8 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
   pitch = acosf(TWorldGoal[0][0]);
   if (pitch != 0)
   {
-    yaw = atan2f(TWorldGoal[0][1] / sinf(pitch), TWorldGoal[0][2] / sinf(pitch));
-    roll = atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
+    roll = atan2f(TWorldGoal[0][1] / sinf(pitch), TWorldGoal[0][2] / sinf(pitch));
+    yaw = atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
   }
   else
   {
