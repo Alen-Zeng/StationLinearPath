@@ -165,16 +165,17 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
 bool SLPClassdef::Calculate()
 {
   /* 判断终点是否超限 */
-  xyzTracGene(goalWorld, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
-  if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]))
+  attitudeCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+  xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+  if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
     return false;
 
   /* 计算中间点 */
-  endEffLocCal(AttiTrac[0],AttiTrac[1],AttiTrac[2]);
+  endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
   midPointCal();
-  xyzTracGene(midWorld,MidxyzTrac[0],MidxyzTrac[1],MidxyzTrac[2]);
+  xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
   /* 判断中间点是否超限 */
-  return  limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+  return limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]);
 }
 
 /**
@@ -334,18 +335,19 @@ void SLPClassdef::midPointCal()
  * @brief 产生平移轨迹
  * 
  * @param point 世界坐标系下的x--y--z
+ * @param _attiTrac 小三轴小三轴yaw--pitch--roll
  * @param lift 
  * @param extend 
  * @param translate 
  * @return true 
  * @return false 
  */
-void SLPClassdef::xyzTracGene(float point[3], float &lift, float &extend, float &translate)
+void SLPClassdef::xyzTracGene(float point[3], float _attiTrac[3], float &lift, float &extend, float &translate)
 {
   /* 公式需要验证，常数项为世界坐标原点与平移机构零点的偏差 */
-  extend = point[0] - errx - x1 + x2 + x3 * cosf(AttiTrac[1]);
-  translate = point[1] - erry - y1 + y2 * cosf(AttiTrac[0]) - z2 * sinf(AttiTrac[0]) + x3 * sinf(AttiTrac[1]) * sinf(AttiTrac[0]);
-  lift = point[2] - errz - z1 + z2 * cosf(AttiTrac[0]) + y2 * sin(AttiTrac[0]) - x3 * cosf(AttiTrac[0]) * sinf(AttiTrac[1]);
+  extend = point[0] - errx - x1 + x2 + x3 * cosf(_attiTrac[1]);
+  translate = point[1] - erry - y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0]);
+  lift = point[2] - errz - z1 + z2 * cosf(_attiTrac[0]) + y2 * sin(_attiTrac[0]) - x3 * cosf(_attiTrac[0]) * sinf(_attiTrac[1]);
 }
 
 /**

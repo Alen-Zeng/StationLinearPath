@@ -123,7 +123,7 @@ private:
   void endEffLocCal(float _yaw = 0.0f, float _pitch = 0.0f, float _roll = 0.0f);
   uint8_t decSurfaceCal(float endEffGoal[3]);
   void midPointCal();
-  void xyzTracGene(float point[3], float &lift, float &extend, float &translate);
+  void xyzTracGene(float point[3], float _attiTrac[3], float &lift, float &extend, float &translate);
   bool limitCheck(float &_lift, float &_extend, float &_translate, float &_yaw, float &_pitch, float &_roll);
 
 public:
