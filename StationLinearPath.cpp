@@ -23,6 +23,7 @@
           2. 循环调用recVisionTarget和Calculate，接收Calculate返回的结果判断
           3. 如果Calculate返回的结果为true，此时可以调用getMidxyzTrac和getGoalxyzTrac获取轨迹点数据，并执行
       -# 代码涉及较多的符号，请参考代码配套的说明文档
+      -# 没有太多时间想架构，修修补补，内部全是shit，凑合着看吧，有时间再改
     @warning
       -# 如果Calculate返回的结果为false，请勿调用getMidxyzTrac和getGoalxyzTrac，否则会获得错误数据
       -# 
@@ -58,6 +59,8 @@
 
 SLPClassdef::SLPClassdef(SLPConstantStructdef &_SLPCon) 
 {
+  /* 安全距离 */
+  safeR = _SLPCon.safeR;
   /* 关节限位参数 */
   liftMin = _SLPCon.liftMin;
   liftMax = _SLPCon.liftMax;

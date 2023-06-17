@@ -39,6 +39,8 @@ typedef struct _VisionPackStructdef
 
 typedef struct _SLPConstantStructdef
 {
+  /* 安全距离 */
+  float safeR;
   /* 关节限位参数 */
   float liftMin;
   float liftMax;
