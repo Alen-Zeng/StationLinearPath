@@ -66,6 +66,31 @@ typedef struct _SLPConstantStructdef
   float autoConx;
   float autoCony;
   float autoConz;
+
+  SLPConstantStructdef(float safeR,
+                       float liftMin, float liftMax,
+                       float extendMin, float extendMax,
+                       float translateMin, float translateMax,
+                       float yawMin, float yawMax,
+                       float pitchMin, float pitchMax,
+                       float rollMin, float rollMax,
+                       float x1, float y1, float z1,
+                       float x2, float y2, float z2,
+                       float x3,
+                       float errx, float erry, float errz,
+                       float autoConx, float autoCony, float autoConz) : 
+                      safeR(safeR),
+                      liftMin(liftMin), liftMax(liftMax),
+                      extendMin(extendMin), extendMax(extendMax),
+                      translateMin(translateMin), translateMax(translateMax),
+                      yawMin(yawMin), yawMax(yawMax),
+                      pitchMin(pitchMin), pitchMax(pitchMax),
+                      rollMin(rollMin), rollMax(rollMax),
+                      x1(x1), y1(y1), z1(z1),
+                      x2(x2), y2(y2), z2(z2),
+                      x3(x3),
+                      errx(errx), erry(erry), errz(errz),
+                      autoConx(autoConx), autoCony(autoCony), autoConz(autoConz) {}
 }SLPConstantStructdef;
 
 class SLPClassdef
