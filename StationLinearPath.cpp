@@ -374,7 +374,7 @@ bool SLPClassdef::limitCheck(float &_lift, float &_extend, float &_translate, fl
 {
   if(liftMin      <= _lift        && _lift      <= liftMax
   && extendMin    <= _extend      && _extend    <= extendMax
-  && translateMax <= _translate   && _translate <= translateMax
+  && translateMin <= _translate   && _translate <= translateMax
   && yawMin       <= _yaw         && _yaw       <= yawMax
   && pitchMin     <= _pitch       && _pitch     <= pitchMax
   && rollMin      <= _roll        && _roll      <= rollMax)
