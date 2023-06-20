@@ -122,7 +122,7 @@ private:
   float autoConTrans;
   float autoConLif;
 
-
+  uint8_t surfaceRes;     // 决策面判断结果
   float visionT[3][4];    // 视觉旋转矩阵与位置
   float TWorldGoal[3][4]; // 世界坐标系描述兑换站坐标系
   float TGoalWorld[3][4]; // 兑换站坐标系描述世界坐标系
