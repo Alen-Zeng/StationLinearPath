@@ -182,6 +182,12 @@ bool SLPClassdef::Calculate()
 {
   /* 姿态计算 */
   attitudeCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+  /* 兑换站位点计算 */
+  xyzTracGene(stationWorld,AttiTrac,StationxyzTrac[0],StationxyzTrac[1],StationxyzTrac[2]);
+  /* 判断兑换站位点是否超限 */
+  if (false == limitCheck(StationxyzTrac[0], StationxyzTrac[1], StationxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+    return false;
+    
   /* 终点计算 */
   xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
   /* 判断终点是否超限 */

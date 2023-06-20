@@ -147,6 +147,7 @@ private:
   float AttiTrac[3];    //小三轴yaw--pitch--roll目标
   float MidxyzTrac[3];  // lift--extend--translate
   float GoalxyzTrac[3]; // lift--extend--translate
+  float StationxyzTrac[3]; // lift--extend--translate
 
   void quaCoord2TMatrix(float qx, float qy, float qz, float qw, float x, float y, float z, float TMat[3][4]);
   void attitudeCal(float &yaw, float &pitch, float &roll);
