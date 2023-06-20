@@ -83,9 +83,9 @@ SLPClassdef::SLPClassdef(SLPConstantStructdef &_SLPCon)
   erry = _SLPCon.erry;
   errz = _SLPCon.errz;
   /* 视觉兑换自动组的平移常数项 */
-  autoConx = _SLPCon.autoConx;
-  autoCony = _SLPCon.autoCony;
-  autoConz = _SLPCon.autoConz;
+  autoConExt = _SLPCon.autoConExt;
+  autoConTrans = _SLPCon.autoConTrans;
+  autoConLif = _SLPCon.autoConLif;
 }
 
 /**
@@ -239,9 +239,9 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
 void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
   /* 考虑小三轴位移, 第一个常数项为3个平移常数项，需要结合动作组调整 */
-  endEffWorld[0] = autoConx + errx + x1 + x2 + x3 * cosf(_pitch);
-  endEffWorld[1] = autoCony + erry + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
-  endEffWorld[2] = autoConz + errz + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
+  endEffWorld[0] = autoConExt + errx + x1 + x2 + x3 * cosf(_pitch);
+  endEffWorld[1] = autoConTrans + erry + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
+  endEffWorld[2] = autoConLif + errz + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
 
   endEffGoal[0] = endEffWorld[0]*TGoalWorld[0][0]+endEffWorld[1]*TGoalWorld[0][1]+endEffWorld[2]*TGoalWorld[0][2]+TGoalWorld[0][3];
   endEffGoal[1] = endEffWorld[0]*TGoalWorld[1][0]+endEffWorld[1]*TGoalWorld[1][1]+endEffWorld[2]*TGoalWorld[1][2]+TGoalWorld[1][3];
@@ -356,9 +356,9 @@ bool SLPClassdef::midPointCal()
 void SLPClassdef::xyzTracGene(float point[3], float _attiTrac[3], float &lift, float &extend, float &translate)
 {
   /* 常数项为世界坐标原点与平移机构零点的偏差 */
-  extend = point[0] - autoConx - errx - x1 + x2 + x3 * cosf(_attiTrac[1]);
-  translate = point[1] - autoCony - erry - y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0]);
-  lift = point[2] - autoConz - errz - z1 + z2 * cosf(_attiTrac[0]) + y2 * sin(_attiTrac[0]) - x3 * cosf(_attiTrac[0]) * sinf(_attiTrac[1]);
+  extend = point[0] - errx - (x1 + x2 + x3 * cosf(_attiTrac[1]));
+  translate = point[1] - erry - (y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0]));
+  lift = point[2] - errz - (z1 + z2 * cosf(_attiTrac[0]) + y2 * sin(_attiTrac[0]) - x3 * cosf(_attiTrac[0]) * sinf(_attiTrac[1]));
 }
 
 /**

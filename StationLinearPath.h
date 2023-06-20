@@ -63,9 +63,9 @@ typedef struct _SLPConstantStructdef
   float erry;
   float errz;
   /* 视觉兑换自动组的平移常数项，需要结合动作组调整 */
-  float autoConx;
-  float autoCony;
-  float autoConz;
+  float autoConExt;
+  float autoConTrans;
+  float autoConLif;
 
   _SLPConstantStructdef(float safeR,
                        float liftMin, float liftMax,
@@ -78,7 +78,7 @@ typedef struct _SLPConstantStructdef
                        float x2, float y2, float z2,
                        float x3,
                        float errx, float erry, float errz,
-                       float autoConx, float autoCony, float autoConz) : 
+                       float autoConExt, float autoConTrans, float autoConLif) : 
                       safeR(safeR),
                       liftMin(liftMin), liftMax(liftMax),
                       extendMin(extendMin), extendMax(extendMax),
@@ -90,7 +90,7 @@ typedef struct _SLPConstantStructdef
                       x2(x2), y2(y2), z2(z2),
                       x3(x3),
                       errx(errx), erry(erry), errz(errz),
-                      autoConx(autoConx), autoCony(autoCony), autoConz(autoConz) {}
+                      autoConExt(autoConExt), autoConTrans(autoConTrans), autoConLif(autoConLif) {}
 }SLPConstantStructdef;
 
 class SLPClassdef
@@ -118,9 +118,9 @@ private:
   float erry;
   float errz;
   /* 视觉兑换自动组的平移常数项,需要结合动作组调整 */
-  float autoConx;
-  float autoCony;
-  float autoConz;
+  float autoConExt;
+  float autoConTrans;
+  float autoConLif;
 
 
   float visionT[3][4];    // 视觉旋转矩阵与位置
