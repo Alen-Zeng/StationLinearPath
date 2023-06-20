@@ -67,7 +67,7 @@ typedef struct _SLPConstantStructdef
   float autoCony;
   float autoConz;
 
-  SLPConstantStructdef(float safeR,
+  _SLPConstantStructdef(float safeR,
                        float liftMin, float liftMax,
                        float extendMin, float extendMax,
                        float translateMin, float translateMax,
