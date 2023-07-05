@@ -45,6 +45,15 @@
 #include "StationLinearPath.h"
 /* function prototypes -------------------------------------------------------*/
 
+namespace SLP_NP
+{
+  template <typename T>
+  const T &abs(const T &input)
+  {
+    return input < (T)0 ? -input : input;
+  }
+}
+
 #ifndef PI
 #define PI 3.14159265358979f
 #endif
@@ -317,37 +326,46 @@ bool SLPClassdef::midPointCal()
 {
   static float midGoal[3] = {0};
   surfaceRes = decSurfaceCal(endEffGoal);
-  switch (surfaceRes)
+  if (SLP_NP::abs(endEffGoal[1]) <= 0.144 + safeR && SLP_NP::abs(endEffGoal[2]) <= 0.144 + safeR)
   {
-  case 1:       //前表面
-    midGoal[0] = G[0];
-    midGoal[1] = G[1];
-    midGoal[2] = G[2];
-    break;
-  case 2:       //上表面
     midGoal[0] = -safeR;
-    midGoal[1] = (endEffGoal[1] * (0.144f + safeR)) / (endEffGoal[2]);
-    midGoal[2] = 0.144f + safeR;
-    break;
-  case 3:       //左表面
-    midGoal[0] = -safeR;
-    midGoal[1] = 0.144f + safeR;
-    midGoal[2] = (endEffGoal[2] * (0.144f + safeR)) / (endEffGoal[1]);
-    break;
-  case 4:       //右表面
-    midGoal[0] = -safeR;
-    midGoal[1] = -0.144f - safeR;
-    midGoal[2] = (endEffGoal[2] * (-0.144f - safeR)) / (endEffGoal[1]);
-    break;
-  case 5:       //下表面
-    midGoal[0] = -safeR;
-    midGoal[1] = (endEffGoal[1] * (-0.144f - safeR)) / (endEffGoal[2]);
-    midGoal[2] = -0.144f - safeR;
-    break;
-  
-  default:
-    return false;
-    break;
+    midGoal[1] = endEffGoal[1];
+    midGoal[2] = endEffGoal[2];
+  }
+  else
+  {
+    switch (surfaceRes)
+    {
+    case 1:       //前表面
+      midGoal[0] = G[0];
+      midGoal[1] = G[1];
+      midGoal[2] = G[2];
+      break;
+    case 2:       //上表面
+      midGoal[0] = -safeR;
+      midGoal[1] = (endEffGoal[1] * (0.144f + safeR)) / (endEffGoal[2]);
+      midGoal[2] = 0.144f + safeR;
+      break;
+    case 3:       //左表面
+      midGoal[0] = -safeR;
+      midGoal[1] = 0.144f + safeR;
+      midGoal[2] = (endEffGoal[2] * (0.144f + safeR)) / (endEffGoal[1]);
+      break;
+    case 4:       //右表面
+      midGoal[0] = -safeR;
+      midGoal[1] = -0.144f - safeR;
+      midGoal[2] = (endEffGoal[2] * (-0.144f - safeR)) / (endEffGoal[1]);
+      break;
+    case 5:       //下表面
+      midGoal[0] = -safeR;
+      midGoal[1] = (endEffGoal[1] * (-0.144f - safeR)) / (endEffGoal[2]);
+      midGoal[2] = -0.144f - safeR;
+      break;
+    
+    default:
+      return false;
+      break;
+    }
   }
 
   if(surfaceRes != 0)
