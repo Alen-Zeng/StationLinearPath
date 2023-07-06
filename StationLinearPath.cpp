@@ -392,7 +392,7 @@ void SLPClassdef::xyzTracGene(float point[3], float _attiTrac[3], float &lift, f
 {
   /* 常数项为世界坐标原点与平移机构零点的偏差 */
   extend = point[0] - errx - (x1 + x2 + x3 * cosf(_attiTrac[1]));
-  translate = point[1] - erry - (y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0]));
+  translate = translateMax - (point[1] - erry - (y1 + y2 * cosf(_attiTrac[0]) - z2 * sinf(_attiTrac[0]) + x3 * sinf(_attiTrac[1]) * sinf(_attiTrac[0])));
   lift = point[2] - errz - (z1 + z2 * cosf(_attiTrac[0]) + y2 * sin(_attiTrac[0]) - x3 * cosf(_attiTrac[0]) * sinf(_attiTrac[1]));
 }
 
