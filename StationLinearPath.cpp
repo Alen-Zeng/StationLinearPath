@@ -266,7 +266,7 @@ void SLPClassdef::endEffLocCal(float _yaw, float _pitch, float _roll)
 {
   /* 考虑小三轴位移, 第一个常数项为3个平移常数项，需要结合动作组调整 */
   endEffWorld[0] = autoConExt + errx + x1 + x2 + x3 * cosf(_pitch);
-  endEffWorld[1] = autoConTrans + erry + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
+  endEffWorld[1] = -autoConTrans + erry + y1 + y2 * cosf(_yaw) - z2 * sinf(_yaw) + x3 * sin(_pitch) * sinf(_yaw);
   endEffWorld[2] = autoConLif + errz + z1 + z2 * cosf(_yaw) + y2 * sin(_yaw) - x3 * cosf(_yaw) * sinf(_pitch);
 
   endEffGoal[0] = endEffWorld[0]*TGoalWorld[0][0]+endEffWorld[1]*TGoalWorld[0][1]+endEffWorld[2]*TGoalWorld[0][2]+TGoalWorld[0][3];
@@ -324,7 +324,6 @@ uint8_t SLPClassdef::decSurfaceCal(float endEffGoal[3])
  */
 bool SLPClassdef::midPointCal()
 {
-  static float midGoal[3] = {0};
   surfaceRes = decSurfaceCal(endEffGoal);
   if (SLP_NP::abs(endEffGoal[1]) <= 0.144 + safeR && SLP_NP::abs(endEffGoal[2]) <= 0.144 + safeR)
   {

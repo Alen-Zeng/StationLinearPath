@@ -130,6 +130,7 @@ private:
   float TGoalWorld[3][4]; // 目标点坐标系描述世界坐标系
   float endEffWorld[3];   // 末端小三轴世界坐标系xyz
   float endEffGoal[3];    // 末端小三轴兑换站坐标系xyz
+  float midGoal[3];       // 兑换站坐标系下中间点xyz
   float midWorld[3];      // 中间点xyz
   float goalWorld[3];     // 目标点xyz
   float stationWorld[3];  // 兑换站xyz
