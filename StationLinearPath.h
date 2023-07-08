@@ -125,7 +125,6 @@ private:
   uint8_t surfaceRes;     // 决策面判断结果
   float visionT[3][4];    // 视觉旋转矩阵与位置
   float TWorldStation[3][4]; // 世界坐标系描述兑换站坐标系
-  float TStationWorld[3][4]; // 兑换站坐标系描述世界坐标系
   float TWorldGoal[3][4]; // 世界坐标系描述目标点坐标系
   float TGoalWorld[3][4]; // 目标点坐标系描述世界坐标系
   float endEffWorld[3];   // 末端小三轴世界坐标系xyz

@@ -130,29 +130,21 @@ void SLPClassdef::quaCoord2TMatrix(float qx, float qy, float qz, float qw, float
 void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
 {
   quaCoord2TMatrix(visionPack.qx,visionPack.qy,visionPack.qz,visionPack.qw,visionPack.x,visionPack.y,visionPack.z,visionT);
-  TWorldStation[0][0] = visionT[2][2];   TWorldStation[0][1] = -visionT[2][0];    TWorldStation[0][2] = -visionT[2][1];     TWorldStation[0][3] = visionT[2][3];
-  TWorldStation[1][0] = -visionT[0][2];   TWorldStation[1][1] = visionT[0][0];    TWorldStation[1][2] = visionT[0][1];     TWorldStation[1][3] = -visionT[0][3];
-  TWorldStation[2][0] = -visionT[1][2];   TWorldStation[2][1] = visionT[1][0];    TWorldStation[2][2] = visionT[1][1];     TWorldStation[2][3] = -visionT[1][3];
+  TWorldGoal[0][0] = visionT[2][2];   TWorldGoal[0][1] = -visionT[2][0];    TWorldGoal[0][2] = -visionT[2][1];     TWorldGoal[0][3] = visionT[2][3];
+  TWorldGoal[1][0] = -visionT[0][2];   TWorldGoal[1][1] = visionT[0][0];    TWorldGoal[1][2] = visionT[0][1];     TWorldGoal[1][3] = -visionT[0][3];
+  TWorldGoal[2][0] = -visionT[1][2];   TWorldGoal[2][1] = visionT[1][0];    TWorldGoal[2][2] = visionT[1][1];     TWorldGoal[2][3] = -visionT[1][3];
 
-  stationWorld[0] = TWorldStation[0][3];
-  stationWorld[1] = TWorldStation[1][3];
-  stationWorld[2] = TWorldStation[2][3];
+  stationWorld[0] = TWorldGoal[0][3];
+  stationWorld[1] = TWorldGoal[1][3];
+  stationWorld[2] = TWorldGoal[2][3];
 
-  TStationWorld[0][0] = visionT[2][2];   TStationWorld[0][1] = -visionT[0][2];    TStationWorld[0][2] = -visionT[1][2];    TStationWorld[0][3] = -visionT[0][3] * visionT[0][2] - visionT[1][3] * visionT[1][2] - visionT[2][3] * visionT[2][2];
-  TStationWorld[1][0] = -visionT[2][0];   TStationWorld[1][1] = visionT[0][0];    TStationWorld[1][2] = visionT[1][0];     TStationWorld[1][3] = visionT[0][3] * visionT[0][0] + visionT[1][3] * visionT[1][0] + visionT[2][3] * visionT[2][0];
-  TStationWorld[2][0] = -visionT[2][1];   TStationWorld[2][1] = visionT[0][1];    TStationWorld[2][2] = visionT[1][1];     TStationWorld[2][3] = visionT[0][3] * visionT[0][1] + visionT[1][3] * visionT[1][1] + visionT[2][3] * visionT[2][1];
+  TGoalWorld[0][0] = visionT[2][2];   TGoalWorld[0][1] = -visionT[0][2];    TGoalWorld[0][2] = -visionT[1][2];    TGoalWorld[0][3] = -visionT[0][3] * visionT[0][2] - visionT[1][3] * visionT[1][2] - visionT[2][3] * visionT[2][2];
+  TGoalWorld[1][0] = -visionT[2][0];   TGoalWorld[1][1] = visionT[0][0];    TGoalWorld[1][2] = visionT[1][0];     TGoalWorld[1][3] = visionT[0][3] * visionT[0][0] + visionT[1][3] * visionT[1][0] + visionT[2][3] * visionT[2][0];
+  TGoalWorld[2][0] = -visionT[2][1];   TGoalWorld[2][1] = visionT[0][1];    TGoalWorld[2][2] = visionT[1][1];     TGoalWorld[2][3] = visionT[0][3] * visionT[0][1] + visionT[1][3] * visionT[1][1] + visionT[2][3] * visionT[2][1];
 
-  TWorldGoal[0][0] = TWorldStation[0][0]; TWorldGoal[0][1] = TWorldStation[0][1]; TWorldGoal[0][2] = TWorldStation[0][2]; TWorldGoal[0][3] = -safeR * TWorldStation[0][0] + TWorldStation[0][3];
-  TWorldGoal[1][0] = TWorldStation[1][0]; TWorldGoal[1][1] = TWorldStation[1][1]; TWorldGoal[1][2] = TWorldStation[1][2]; TWorldGoal[1][3] = -safeR * TWorldStation[1][0] + TWorldStation[1][3];
-  TWorldGoal[2][0] = TWorldStation[2][0]; TWorldGoal[2][1] = TWorldStation[2][1]; TWorldGoal[2][2] = TWorldStation[2][2]; TWorldGoal[2][3] = -safeR * TWorldStation[2][0] + TWorldStation[2][3];
-
-  TGoalWorld[0][0] = TStationWorld[0][0]; TGoalWorld[0][1] = TStationWorld[0][1]; TGoalWorld[0][2] = TStationWorld[0][2]; TGoalWorld[0][3] = safeR * TStationWorld[0][0] + TStationWorld[0][3];
-  TGoalWorld[1][0] = TStationWorld[1][0]; TGoalWorld[1][1] = TStationWorld[1][1]; TGoalWorld[1][2] = TStationWorld[1][2]; TGoalWorld[1][3] = safeR * TStationWorld[1][0] + TStationWorld[1][3];
-  TGoalWorld[2][0] = TStationWorld[2][0]; TGoalWorld[2][1] = TStationWorld[2][1]; TGoalWorld[2][2] = TStationWorld[2][2]; TGoalWorld[2][3] = safeR * TStationWorld[2][0] + TStationWorld[2][3];
-
-  goalWorld[0] = TWorldGoal[0][3];
-  goalWorld[1] = TWorldGoal[1][3];
-  goalWorld[2] = TWorldGoal[2][3];
+  goalWorld[0] = -safeR * TWorldGoal[0][0] + TWorldGoal[0][3];
+  goalWorld[1] = -safeR * TWorldGoal[1][0] + TWorldGoal[1][3];
+  goalWorld[2] = -safeR * TWorldGoal[2][0] + TWorldGoal[2][3];
 }
 
 /**
