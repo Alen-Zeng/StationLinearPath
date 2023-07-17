@@ -66,6 +66,8 @@ typedef struct _SLPConstantStructdef
   float autoConExt;
   float autoConTrans;
   float autoConLif;
+  /* 警告点距离 */
+  float warnR;
 
   _SLPConstantStructdef(float safeR,
                        float liftMin, float liftMax,
@@ -78,7 +80,8 @@ typedef struct _SLPConstantStructdef
                        float x2, float y2, float z2,
                        float x3,
                        float errx, float erry, float errz,
-                       float autoConExt, float autoConTrans, float autoConLif) : 
+                       float autoConExt, float autoConTrans, float autoConLif,
+                       float warnR = 0) : 
                       safeR(safeR),
                       liftMin(liftMin), liftMax(liftMax),
                       extendMin(extendMin), extendMax(extendMax),
@@ -90,7 +93,8 @@ typedef struct _SLPConstantStructdef
                       x2(x2), y2(y2), z2(z2),
                       x3(x3),
                       errx(errx), erry(erry), errz(errz),
-                      autoConExt(autoConExt), autoConTrans(autoConTrans), autoConLif(autoConLif) {}
+                      autoConExt(autoConExt), autoConTrans(autoConTrans), autoConLif(autoConLif),
+                      warnR(warnR) {}
 }SLPConstantStructdef;
 
 class SLPClassdef
@@ -122,17 +126,18 @@ private:
   float autoConTrans;
   float autoConLif;
 
-  uint8_t surfaceRes;     // 决策面判断结果
-  float visionT[3][4];    // 视觉旋转矩阵与位置
+  uint8_t surfaceRes;        // 决策面判断结果
+  float visionT[3][4];       // 视觉旋转矩阵与位置
   float TWorldStation[3][4]; // 世界坐标系描述兑换站坐标系
-  float TWorldGoal[3][4]; // 世界坐标系描述目标点坐标系
-  float TGoalWorld[3][4]; // 目标点坐标系描述世界坐标系
-  float endEffWorld[3];   // 末端小三轴世界坐标系xyz
-  float endEffGoal[3];    // 末端小三轴兑换站坐标系xyz
-  float midGoal[3];       // 兑换站坐标系下中间点xyz
-  float midWorld[3];      // 中间点xyz
-  float goalWorld[3];     // 目标点xyz
-  float stationWorld[3];  // 兑换站xyz
+  float TWorldGoal[3][4];    // 世界坐标系描述目标点坐标系
+  float TGoalWorld[3][4];    // 目标点坐标系描述世界坐标系
+  float endEffWorld[3];      // 末端小三轴世界坐标系xyz
+  float endEffGoal[3];       // 末端小三轴兑换站坐标系xyz
+  float midGoal[3];          // 兑换站坐标系下中间点xyz
+  float midWorld[3];         // 中间点xyz
+  float goalWorld[3];        // 目标点xyz
+  float stationWorld[3];     // 兑换站xyz
+  float warnPointWorld[3];   // 警告点xyz
   /* 在Goal坐标系下 */
   float O[3] = {0.288f + safeR, 0.144f + safeR, -0.144f - safeR};
   float P[3] = {0.0f - safeR, 0.144f + safeR, -0.144f - safeR};
@@ -144,10 +149,11 @@ private:
   float U[3] = {0.288f + safeR, -0.144f - safeR, 0.144f + safeR};
   float G[3] = {-safeR, 0.0f, 0.0f}; // 目标点xyz
   /* ↑↑在Goal坐标系下 */
-  float AttiTrac[3];    //小三轴yaw--pitch--roll目标
-  float MidxyzTrac[3];  // lift--extend--translate
-  float GoalxyzTrac[3]; // lift--extend--translate
+  float AttiTrac[3];       // 小三轴yaw--pitch--roll目标
+  float MidxyzTrac[3];     // lift--extend--translate
+  float GoalxyzTrac[3];    // lift--extend--translate
   float StationxyzTrac[3]; // lift--extend--translate
+  float WarnxyzTrac[3];    // lift--extend--translate
 
   void quaCoord2TMatrix(float qx, float qy, float qz, float qw, float x, float y, float z, float TMat[3][4]);
   void attitudeCal(float &yaw, float &pitch, float &roll);
@@ -159,12 +165,13 @@ private:
 
 public:
   float safeR = 0.2;  //安全距离
+  float warnR = 0;    //勉强能兑换但兑换站平面不可达的警告距离(警告点离兑换站平面的距离)
 
   SLPClassdef(SLPConstantStructdef &_SLPCon);
   ~SLPClassdef(){};
 
   void recVisionTarget(VisionPackStructdef &visionPack);
-  bool Calculate();
+  uint8_t Calculate();
   void getAttitudeTrac(float &_yaw, float &_pitch, float &_roll);
   void getMidxyzTrac(float &lift, float &extend, float &translate);
   void getGoalxyzTrac(float &lift, float &extend, float &translate);

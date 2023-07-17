@@ -95,6 +95,8 @@ SLPClassdef::SLPClassdef(SLPConstantStructdef &_SLPCon)
   autoConExt = _SLPCon.autoConExt;
   autoConTrans = _SLPCon.autoConTrans;
   autoConLif = _SLPCon.autoConLif;
+  /* 警告点距离 */
+  warnR = _SLPCon.warnR;
 }
 
 /**
@@ -145,6 +147,10 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
   goalWorld[0] = -safeR * TWorldGoal[0][0] + TWorldGoal[0][3];
   goalWorld[1] = -safeR * TWorldGoal[1][0] + TWorldGoal[1][3];
   goalWorld[2] = -safeR * TWorldGoal[2][0] + TWorldGoal[2][3];
+  
+  warnPointWorld[0] = -warnR * TWorldGoal[0][0] + TWorldGoal[0][3];
+  warnPointWorld[1] = -warnR * TWorldGoal[1][0] + TWorldGoal[1][3];
+  warnPointWorld[2] = -warnR * TWorldGoal[2][0] + TWorldGoal[2][3];
 }
 
 /**
@@ -176,32 +182,63 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
 /**
  * @brief 计算轨迹点
  * 
- * @return true 轨迹生成成功
- * @return false 轨迹生成失败
+ * @return uint8_t 0：轨迹生成失败，1：轨迹生成成功，2：勉强兑换警告
  */
-bool SLPClassdef::Calculate()
+uint8_t SLPClassdef::Calculate()
 {
   /* 姿态计算 */
   attitudeCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
   /* 兑换站位点计算 */
   xyzTracGene(stationWorld,AttiTrac,StationxyzTrac[0],StationxyzTrac[1],StationxyzTrac[2]);
+  /* 警告点位点计算 */
+  xyzTracGene(warnPointWorld,AttiTrac,WarnxyzTrac[0],WarnxyzTrac[1],WarnxyzTrac[2]);
   /* 判断兑换站位点是否超限 */
   if (false == limitCheck(StationxyzTrac[0], StationxyzTrac[1], StationxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-    return false;
-    
-  /* 终点计算 */
-  xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
-  /* 判断终点是否超限 */
-  if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-    return false;
+  {
+    /* 判断警告点是否超限 */
+    if (false == limitCheck(WarnxyzTrac[0], WarnxyzTrac[1], WarnxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+      return 0;
+    else
+    {
+      /* 终点计算 */
+      xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+      /* 判断终点是否超限 */
+      if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+        return 0;
 
-  /* 计算中间点 */
-  endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-  /* 如果中间点无解，直接返回错误 */
-  if(!midPointCal()) return false;
-  xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
-  /* 判断中间点是否超限 */
-  return limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+      /* 计算中间点 */
+      endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+      /* 如果中间点无解，直接返回错误 */
+      if (!midPointCal())
+        return 0;
+      xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+      /* 判断中间点是否超限 */
+      if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+        return 0;
+      else
+        return 2; // 兑换站不可达，但警告点可达，返回警告
+    }
+  }
+  else
+  {
+    /* 终点计算 */
+    xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+    /* 判断终点是否超限 */
+    if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+      return 0;
+
+    /* 计算中间点 */
+    endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+    /* 如果中间点无解，直接返回错误 */
+    if (!midPointCal())
+      return 0;
+    xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+    /* 判断中间点是否超限 */
+    if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+      return 0;
+    else
+      return 1;
+  }
 }
 
 /**
