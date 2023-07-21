@@ -174,9 +174,9 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
   pitch = 90.0f - Degrees(pitch);
   roll = Degrees(roll);
   if (-63.0f <= Degrees(yaw) && Degrees(yaw) <= 180.0f)
-    yaw = -yaw + 180.0f;
+    yaw = -Degrees(yaw) + 180.0f;
   else if (-180.0f <= Degrees(yaw) && Degrees(yaw) < -63.0f)
-    yaw = -yaw - 180.0f;
+    yaw = -Degrees(yaw) - 180.0f;
 }
 
 /**
