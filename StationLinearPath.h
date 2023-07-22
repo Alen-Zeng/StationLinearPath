@@ -138,6 +138,7 @@ private:
   float goalWorld[3];        // 目标点xyz
   float stationWorld[3];     // 兑换站xyz
   float warnPointWorld[3];   // 警告点xyz
+  float AttiOri[3];          // 末端原始姿态，非机构位置
   /* 在Goal坐标系下 */
   float O[3] = {0.288f + safeR, 0.144f + safeR, -0.144f - safeR};
   float P[3] = {0.0f - safeR, 0.144f + safeR, -0.144f - safeR};
@@ -156,7 +157,7 @@ private:
   float WarnxyzTrac[3];    // lift--extend--translate
 
   void quaCoord2TMatrix(float qx, float qy, float qz, float qw, float x, float y, float z, float TMat[3][4]);
-  void attitudeCal(float &yaw, float &pitch, float &roll);
+  void attitudeCal(float &yawOri, float &pitchOri, float &rollOri,float &yaw, float &pitch, float &roll);
   void endEffLocCal(float _yaw = 0.0f, float _pitch = 0.0f, float _roll = 0.0f);
   uint8_t decSurfaceCal(float endEffGoal[3]);
   bool midPointCal();

@@ -157,26 +157,26 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
  * @brief 小三轴姿态计算
  * 
  */
-void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
+void SLPClassdef::attitudeCal(float &yawOri, float &pitchOri, float &rollOri,float &yaw, float &pitch, float &roll)
 {
-  pitch = acosf(TWorldGoal[0][0]);
-  if (pitch != 0)
+  pitchOri = acosf(TWorldGoal[0][0]);
+  if (pitchOri != 0)
   {
-    roll = atan2f(TWorldGoal[0][1] / sinf(pitch), TWorldGoal[0][2] / sinf(pitch));
-    yaw = atan2f(TWorldGoal[1][0] / sinf(pitch), -TWorldGoal[2][0] / sinf(pitch));
+    rollOri = atan2f(TWorldGoal[0][1] / sinf(pitchOri), TWorldGoal[0][2] / sinf(pitchOri));
+    yawOri = atan2f(TWorldGoal[1][0] / sinf(pitchOri), -TWorldGoal[2][0] / sinf(pitchOri));
   }
   else
   {
-    roll = 0;
-    yaw = atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
+    rollOri = 0;
+    yawOri = atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
   }
 
-  pitch = 90.0f - Degrees(pitch);
-  roll = Degrees(roll);
-  if (-63.0f <= Degrees(yaw) && Degrees(yaw) <= 180.0f)
-    yaw = -Degrees(yaw) + 180.0f;
-  else if (-180.0f <= Degrees(yaw) && Degrees(yaw) < -63.0f)
-    yaw = -Degrees(yaw) - 180.0f;
+  pitch = 90.0f - Degrees(pitchOri);
+  roll = Degrees(rollOri);
+  if (-63.0f <= Degrees(yawOri) && Degrees(yawOri) <= 180.0f)
+    yaw = -Degrees(yawOri) + 180.0f;
+  else if (-180.0f <= Degrees(yawOri) && Degrees(yawOri) < -63.0f)
+    yaw = -Degrees(yawOri) - 180.0f;
 }
 
 /**
@@ -187,11 +187,11 @@ void SLPClassdef::attitudeCal(float &yaw, float &pitch, float &roll)
 uint8_t SLPClassdef::Calculate()
 {
   /* 姿态计算 */
-  attitudeCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+  attitudeCal(AttiOri[0], AttiOri[1], AttiOri[2],AttiTrac[0], AttiTrac[1], AttiTrac[2]);
   /* 兑换站位点计算 */
-  xyzTracGene(stationWorld,AttiTrac,StationxyzTrac[0],StationxyzTrac[1],StationxyzTrac[2]);
+  xyzTracGene(stationWorld,AttiOri,StationxyzTrac[0],StationxyzTrac[1],StationxyzTrac[2]);
   /* 警告点位点计算 */
-  xyzTracGene(warnPointWorld,AttiTrac,WarnxyzTrac[0],WarnxyzTrac[1],WarnxyzTrac[2]);
+  xyzTracGene(warnPointWorld,AttiOri,WarnxyzTrac[0],WarnxyzTrac[1],WarnxyzTrac[2]);
   /* 判断兑换站位点是否超限 */
   if (false == limitCheck(StationxyzTrac[0], StationxyzTrac[1], StationxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
   {
@@ -201,7 +201,7 @@ uint8_t SLPClassdef::Calculate()
     else
     {
       /* 终点计算 */
-      xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+      xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
       /* 判断终点是否超限 */
       if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
         return 0;
@@ -211,7 +211,7 @@ uint8_t SLPClassdef::Calculate()
       /* 如果中间点无解，直接返回错误 */
       if (!midPointCal())
         return 0;
-      xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+      xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
       /* 判断中间点是否超限 */
       if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
         return 0;
@@ -222,7 +222,7 @@ uint8_t SLPClassdef::Calculate()
   else
   {
     /* 终点计算 */
-    xyzTracGene(goalWorld, AttiTrac, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+    xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
     /* 判断终点是否超限 */
     if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
       return 0;
@@ -232,7 +232,7 @@ uint8_t SLPClassdef::Calculate()
     /* 如果中间点无解，直接返回错误 */
     if (!midPointCal())
       return 0;
-    xyzTracGene(midWorld, AttiTrac, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+    xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
     /* 判断中间点是否超限 */
     if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
       return 0;
