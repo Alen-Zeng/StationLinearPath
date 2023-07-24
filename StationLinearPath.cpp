@@ -144,9 +144,9 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
   TGoalWorld[1][0] = -visionT[2][0];   TGoalWorld[1][1] = visionT[0][0];    TGoalWorld[1][2] = visionT[1][0];     TGoalWorld[1][3] = visionT[0][3] * visionT[0][0] + visionT[1][3] * visionT[1][0] + visionT[2][3] * visionT[2][0];
   TGoalWorld[2][0] = -visionT[2][1];   TGoalWorld[2][1] = visionT[0][1];    TGoalWorld[2][2] = visionT[1][1];     TGoalWorld[2][3] = visionT[0][3] * visionT[0][1] + visionT[1][3] * visionT[1][1] + visionT[2][3] * visionT[2][1];
 
-  goalWorld[0] = -safeR * TWorldGoal[0][0] + TWorldGoal[0][3];
-  goalWorld[1] = -safeR * TWorldGoal[1][0] + TWorldGoal[1][3];
-  goalWorld[2] = -safeR * TWorldGoal[2][0] + TWorldGoal[2][3];
+  goalWorld[0] = -safeR * TWorldGoal[0][0]/*  - 0.02*TWorldGoal[0][1] + 0.025*TWorldGoal[0][2] */ + TWorldGoal[0][3];
+  goalWorld[1] = -safeR * TWorldGoal[1][0]/*  - 0.02*TWorldGoal[1][1] + 0.025*TWorldGoal[1][2] */ + TWorldGoal[1][3];
+  goalWorld[2] = -safeR * TWorldGoal[2][0]/*  - 0.02*TWorldGoal[2][1] + 0.025*TWorldGoal[2][2] */ + TWorldGoal[2][3];
   
   warnPointWorld[0] = -warnR * TWorldGoal[0][0] + TWorldGoal[0][3];
   warnPointWorld[1] = -warnR * TWorldGoal[1][0] + TWorldGoal[1][3];
@@ -206,15 +206,15 @@ uint8_t SLPClassdef::Calculate()
       if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
         return 0;
 
-      /* 计算中间点 */
-      endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-      /* 如果中间点无解，直接返回错误 */
-      if (!midPointCal())
-        return 0;
-      xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
-      /* 判断中间点是否超限 */
-      if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-        return 0;
+      // /* 计算中间点 */
+      // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+      // /* 如果中间点无解，直接返回错误 */
+      // if (!midPointCal())
+      //   return 0;
+      // xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+      // /* 判断中间点是否超限 */
+      // if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+      //   return 0;
       else
         return 2; // 兑换站不可达，但警告点可达，返回警告
     }
@@ -227,15 +227,15 @@ uint8_t SLPClassdef::Calculate()
     if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
       return 0;
 
-    /* 计算中间点 */
-    endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-    /* 如果中间点无解，直接返回错误 */
-    if (!midPointCal())
-      return 0;
-    xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
-    /* 判断中间点是否超限 */
-    if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      return 0;
+    // /* 计算中间点 */
+    // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
+    // /* 如果中间点无解，直接返回错误 */
+    // if (!midPointCal())
+    //   return 0;
+    // xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
+    // /* 判断中间点是否超限 */
+    // if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+    //   return 0;
     else
       return 1;
   }
