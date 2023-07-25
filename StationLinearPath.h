@@ -126,19 +126,21 @@ private:
   float autoConTrans;
   float autoConLif;
 
-  uint8_t surfaceRes;        // 决策面判断结果
-  float visionT[3][4];       // 视觉旋转矩阵与位置
-  float TWorldStation[3][4]; // 世界坐标系描述兑换站坐标系
-  float TWorldGoal[3][4];    // 世界坐标系描述目标点坐标系
-  float TGoalWorld[3][4];    // 目标点坐标系描述世界坐标系
-  float endEffWorld[3];      // 末端小三轴世界坐标系xyz
-  float endEffGoal[3];       // 末端小三轴兑换站坐标系xyz
-  float midGoal[3];          // 兑换站坐标系下中间点xyz
-  float midWorld[3];         // 中间点xyz
-  float goalWorld[3];        // 目标点xyz
-  float stationWorld[3];     // 兑换站xyz
-  float warnPointWorld[3];   // 警告点xyz
-  float AttiOri[3];          // 末端原始姿态，非机构位置
+  uint8_t surfaceRes;            // 决策面判断结果
+  float visionT[3][4];           // 视觉旋转矩阵与位置
+  float TWorldStation[3][4];     // 世界坐标系描述兑换站坐标系
+  float TWorldGoal[3][4];        // 世界坐标系描述目标点坐标系
+  float TGoalWorld[3][4];        // 目标点坐标系描述世界坐标系
+  float endEffWorld[3];          // 末端小三轴世界坐标系xyz
+  float endEffGoal[3];           // 末端小三轴兑换站坐标系xyz
+  float midGoal[3];              // 兑换站坐标系下中间点xyz
+  float midWorld[3];             // 中间点xyz
+  float goalWorld[3];            // 目标点xyz
+  float stationWorld[3];         // 兑换站xyz
+  float stationUpIncWorld[3];    // 兑换站向上R增量xyz
+  float stationRightIncWorld[3]; // 兑换站向右R增量xyz
+  float warnPointWorld[3];       // 警告点xyz
+  float AttiOri[3];              // 末端原始姿态，非机构位置
   /* 在Goal坐标系下 */
   float O[3] = {0.288f + safeR, 0.144f + safeR, -0.144f - safeR};
   float P[3] = {0.0f - safeR, 0.144f + safeR, -0.144f - safeR};
@@ -150,11 +152,13 @@ private:
   float U[3] = {0.288f + safeR, -0.144f - safeR, 0.144f + safeR};
   float G[3] = {-safeR, 0.0f, 0.0f}; // 目标点xyz
   /* ↑↑在Goal坐标系下 */
-  float AttiTrac[3];       // 小三轴yaw--pitch--roll目标
-  float MidxyzTrac[3];     // lift--extend--translate
-  float GoalxyzTrac[3];    // lift--extend--translate
-  float StationxyzTrac[3]; // lift--extend--translate
-  float WarnxyzTrac[3];    // lift--extend--translate
+  float AttiTrac[3];        // 小三轴yaw--pitch--roll目标
+  float MidxyzTrac[3];      // lift--extend--translate
+  float GoalxyzTrac[3];     // lift--extend--translate
+  float StationxyzTrac[3];  // lift--extend--translate
+  float WarnxyzTrac[3];     // lift--extend--translate
+  float UpIncxyzTrac[3];    // 根据姿态向上平移的增量lift--extend--translate
+  float RightIncxyzTrac[3]; // 根据姿态向右平移的增量lift--extend--translate
 
   void quaCoord2TMatrix(float qx, float qy, float qz, float qw, float x, float y, float z, float TMat[3][4]);
   void attitudeCal(float &yawOri, float &pitchOri, float &rollOri,float &yaw, float &pitch, float &roll);
@@ -177,6 +181,9 @@ public:
   void getMidxyzTrac(float &lift, float &extend, float &translate);
   void getGoalxyzTrac(float &lift, float &extend, float &translate);
   void getStationxyzTrac(float &lift, float &extend, float &translate);
+  void getUpIncxyzTrac(float &lift, float &extend, float &translate);
+  void getRightIncxyzTrac(float &lift, float &extend, float &translate);
+  void getForWardIncxyzTrac(float &lift, float &extend, float &translate);
 };
 
 

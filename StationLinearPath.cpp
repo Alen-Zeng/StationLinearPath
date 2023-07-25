@@ -151,6 +151,14 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
   warnPointWorld[0] = -warnR * TWorldGoal[0][0] + TWorldGoal[0][3];
   warnPointWorld[1] = -warnR * TWorldGoal[1][0] + TWorldGoal[1][3];
   warnPointWorld[2] = -warnR * TWorldGoal[2][0] + TWorldGoal[2][3];
+
+  stationUpIncWorld[0] = 1.0f * TWorldGoal[0][2] + TWorldGoal[0][3];
+  stationUpIncWorld[1] = 1.0f * TWorldGoal[1][2] + TWorldGoal[1][3];
+  stationUpIncWorld[2] = 1.0f * TWorldGoal[2][2] + TWorldGoal[2][3];
+
+  stationRightIncWorld[0] = -1.0f * TWorldGoal[0][1] + TWorldGoal[0][3];
+  stationRightIncWorld[1] = -1.0f * TWorldGoal[1][1] + TWorldGoal[1][3];
+  stationRightIncWorld[2] = -1.0f * TWorldGoal[2][1] + TWorldGoal[2][3];
 }
 
 /**
@@ -239,6 +247,17 @@ uint8_t SLPClassdef::Calculate()
     else
       return 1;
   }
+
+  /* 向上增量计算 */
+  xyzTracGene(stationUpIncWorld, AttiOri, UpIncxyzTrac[0], UpIncxyzTrac[1], UpIncxyzTrac[2]);
+  UpIncxyzTrac[0] = UpIncxyzTrac[0] - StationxyzTrac[0];
+  UpIncxyzTrac[1] = UpIncxyzTrac[1] - StationxyzTrac[1];
+  UpIncxyzTrac[2] = UpIncxyzTrac[2] - StationxyzTrac[2];
+  /* 向右增量计算 */
+  xyzTracGene(stationRightIncWorld, AttiOri, RightIncxyzTrac[0], RightIncxyzTrac[1], RightIncxyzTrac[2]);
+  RightIncxyzTrac[0] = RightIncxyzTrac[0] - StationxyzTrac[0];
+  RightIncxyzTrac[1] = RightIncxyzTrac[1] - StationxyzTrac[1];
+  RightIncxyzTrac[2] = RightIncxyzTrac[2] - StationxyzTrac[2];
 }
 
 /**
@@ -298,6 +317,47 @@ void SLPClassdef::getStationxyzTrac(float &lift, float &extend, float &translate
   translate = StationxyzTrac[2];
 }
 
+/**
+ * @brief 获取上移增量，单位m
+ * 
+ * @param lift 
+ * @param extend 
+ * @param translate 
+ */
+void SLPClassdef::getUpIncxyzTrac(float &lift, float &extend, float &translate)
+{
+  lift = UpIncxyzTrac[0];
+  extend = UpIncxyzTrac[1];
+  translate = UpIncxyzTrac[2];
+}
+
+/**
+ * @brief 获取右移增量，单位m
+ * 
+ * @param lift 
+ * @param extend 
+ * @param translate 
+ */
+void SLPClassdef::getRightIncxyzTrac(float &lift, float &extend, float &translate)
+{
+  lift = RightIncxyzTrac[0];
+  extend = RightIncxyzTrac[1];
+  translate = RightIncxyzTrac[2];
+}
+
+/**
+ * @brief 获取前移增量，单位m
+ * 
+ * @param lift 
+ * @param extend 
+ * @param translate 
+ */
+void SLPClassdef::getForWardIncxyzTrac(float &lift, float &extend, float &translate)
+{
+  lift = StationxyzTrac[0] - GoalxyzTrac[0];
+  extend = StationxyzTrac[1] - GoalxyzTrac[1];
+  translate = StationxyzTrac[2] - GoalxyzTrac[2];
+}
 
 /**
  * @brief 解算出小三轴末端相对于兑换站的xyz位置
