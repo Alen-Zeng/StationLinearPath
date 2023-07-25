@@ -176,6 +176,7 @@ public:
   void getAttitudeTrac(float &_yaw, float &_pitch, float &_roll);
   void getMidxyzTrac(float &lift, float &extend, float &translate);
   void getGoalxyzTrac(float &lift, float &extend, float &translate);
+  void getStationxyzTrac(float &lift, float &extend, float &translate);
 };
 
 

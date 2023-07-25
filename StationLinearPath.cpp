@@ -270,7 +270,7 @@ void SLPClassdef::getMidxyzTrac(float &lift, float &extend, float &translate)
 }
 
 /**
- * @brief 获取目标点
+ * @brief 获取目标目标点
  * 
  * @param lift 
  * @param extend 
@@ -281,6 +281,21 @@ void SLPClassdef::getGoalxyzTrac(float &lift, float &extend, float &translate)
   lift = GoalxyzTrac[0];
   extend = GoalxyzTrac[1];
   translate = GoalxyzTrac[2];
+}
+
+
+/**
+ * @brief 获取兑换站目标点
+ * 
+ * @param lift 
+ * @param extend 
+ * @param translate 
+ */
+void SLPClassdef::getStationxyzTrac(float &lift, float &extend, float &translate)
+{
+  lift = StationxyzTrac[0];
+  extend = StationxyzTrac[1];
+  translate = StationxyzTrac[2];
 }
 
 
