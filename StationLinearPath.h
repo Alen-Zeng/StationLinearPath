@@ -167,6 +167,7 @@ private:
   bool midPointCal();
   void xyzTracGene(float point[3], float _attiTrac[3], float &lift, float &extend, float &translate);
   bool limitCheck(float &_lift, float &_extend, float &_translate, float &_yaw, float &_pitch, float &_roll);
+  bool attiCheck(float &_yaw, float &_pitch, float &_roll);
 
 public:
   float safeR = 0.2;  //安全距离

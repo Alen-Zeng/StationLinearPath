@@ -190,7 +190,7 @@ void SLPClassdef::attitudeCal(float &yawOri, float &pitchOri, float &rollOri,flo
 /**
  * @brief 计算轨迹点
  * 
- * @return uint8_t 0：轨迹生成失败，1：轨迹生成成功，2：勉强兑换警告
+ * @return uint8_t 0：轨迹生成失败，1：轨迹生成成功，2：勉强兑换警告，3：仅姿态可用
  */
 uint8_t SLPClassdef::Calculate()
 {
@@ -233,7 +233,12 @@ uint8_t SLPClassdef::Calculate()
     xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
     /* 判断终点是否超限 */
     if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      return 0;
+    {
+      if (false == attiCheck(AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+        return 0;
+      else
+        return 3;
+    }
 
     // /* 计算中间点 */
     // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
@@ -514,6 +519,27 @@ bool SLPClassdef::limitCheck(float &_lift, float &_extend, float &_translate, fl
   && extendMin    <= _extend      && _extend    <= extendMax
   && translateMin <= _translate   && _translate <= translateMax
   && yawMin       <= _yaw         && _yaw       <= yawMax
+  && pitchMin     <= _pitch       && _pitch     <= pitchMax
+  && rollMin      <= _roll        && _roll      <= rollMax)
+  {
+    return true;
+  }
+  else
+    return false;
+}
+
+/**
+ * @brief 姿态超限判断
+ * 
+ * @param _yaw 
+ * @param _pitch 
+ * @param _roll 
+ * @return true 
+ * @return false 
+ */
+bool SLPClassdef::attiCheck(float &_yaw, float &_pitch, float &_roll)
+{
+  if(yawMin       <= _yaw         && _yaw       <= yawMax
   && pitchMin     <= _pitch       && _pitch     <= pitchMax
   && rollMin      <= _roll        && _roll      <= rollMax)
   {
