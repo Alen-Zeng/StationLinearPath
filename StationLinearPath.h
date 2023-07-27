@@ -55,9 +55,9 @@ typedef struct _SLPConstantStructdef
   float rollMin;
   float rollMax;
   /* 小三轴变换矩阵中用到的常数 */
-  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
-  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
-  float x3 = 0;                 // pitch--roll
+  float x1 = 0.0f, y1 = 0.0f, z1 = 0.0f; // translate--yaw
+  float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f; // yaw--pitch
+  float x3 = 0.0f;                 // pitch--roll
   /* 平移机构坐标原点与世界坐标原点的误差 */
   float errx;
   float erry;
@@ -114,9 +114,9 @@ private:
   float rollMin;
   float rollMax;
   /* 小三轴变换矩阵中用到的常数 */
-  float x1 = 0, y1 = 0, z1 = 0; // translate--yaw
-  float x2 = 0, y2 = 0, z2 = 0; // yaw--pitch
-  float x3 = 0;                 // pitch--roll
+  float x1 = 0.0f, y1 = 0.0f, z1 = 0.0f; // translate--yaw
+  float x2 = 0.0f, y2 = 0.0f, z2 = 0.0f; // yaw--pitch
+  float x3 = 0.0f;                 // pitch--roll
   /* 平移机构坐标原点与世界坐标原点的误差 */
   float errx;
   float erry;
@@ -169,8 +169,8 @@ private:
   bool limitCheck(float &_lift, float &_extend, float &_translate, float &_yaw, float &_pitch, float &_roll);
 
 public:
-  float safeR = 0.2;  //安全距离
-  float warnR = 0;    //勉强能兑换但兑换站平面不可达的警告距离(警告点离兑换站平面的距离)
+  float safeR = 0.2f;  //安全距离
+  float warnR = 0.0f;    //勉强能兑换但兑换站平面不可达的警告距离(警告点离兑换站平面的距离)
 
   SLPClassdef(SLPConstantStructdef &_SLPCon);
   ~SLPClassdef(){};
