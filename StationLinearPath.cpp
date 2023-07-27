@@ -222,7 +222,12 @@ uint8_t SLPClassdef::Calculate()
       xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
       /* 判断终点是否超限 */
       if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-        return 0;
+      {
+        if(false == attiCheck(AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+          return 0;
+        else
+          return 3;
+      }
 
       // /* 计算中间点 */
       // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
@@ -243,12 +248,7 @@ uint8_t SLPClassdef::Calculate()
     xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
     /* 判断终点是否超限 */
     if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-    {
-      if (false == attiCheck(AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-        return 0;
-      else
-        return 3;
-    }
+      return 0;
 
     // /* 计算中间点 */
     // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
