@@ -48,7 +48,7 @@
 namespace SLP_NP
 {
   template <typename T>
-  const T &abs(const T &input)
+  const T abs(const T &input)
   {
     return input < (T)0 ? -input : input;
   }
@@ -168,14 +168,14 @@ void SLPClassdef::recVisionTarget(VisionPackStructdef &visionPack)
 void SLPClassdef::attitudeCal(float &yawOri, float &pitchOri, float &rollOri,float &yaw, float &pitch, float &roll)
 {
   pitchOri = acosf(TWorldGoal[0][0]);
-  if (pitchOri != 0)
+  if (pitchOri != 0.0f)
   {
     rollOri = atan2f(TWorldGoal[0][1] / sinf(pitchOri), TWorldGoal[0][2] / sinf(pitchOri));
     yawOri = atan2f(TWorldGoal[1][0] / sinf(pitchOri), -TWorldGoal[2][0] / sinf(pitchOri));
   }
   else
   {
-    rollOri = 0;
+    rollOri = 0.0f;
     yawOri = atan2f(TWorldGoal[2][1], TWorldGoal[2][2]);
   }
 
@@ -198,6 +198,16 @@ uint8_t SLPClassdef::Calculate()
   attitudeCal(AttiOri[0], AttiOri[1], AttiOri[2],AttiTrac[0], AttiTrac[1], AttiTrac[2]);
   /* 兑换站位点计算 */
   xyzTracGene(stationWorld,AttiOri,StationxyzTrac[0],StationxyzTrac[1],StationxyzTrac[2]);
+  /* 向上增量计算 */
+  xyzTracGene(stationUpIncWorld, AttiOri, UpIncxyzTrac[0], UpIncxyzTrac[1], UpIncxyzTrac[2]);
+  UpIncxyzTrac[0] = UpIncxyzTrac[0] - StationxyzTrac[0];
+  UpIncxyzTrac[1] = UpIncxyzTrac[1] - StationxyzTrac[1];
+  UpIncxyzTrac[2] = UpIncxyzTrac[2] - StationxyzTrac[2];
+  /* 向右增量计算 */
+  xyzTracGene(stationRightIncWorld, AttiOri, RightIncxyzTrac[0], RightIncxyzTrac[1], RightIncxyzTrac[2]);
+  RightIncxyzTrac[0] = RightIncxyzTrac[0] - StationxyzTrac[0];
+  RightIncxyzTrac[1] = RightIncxyzTrac[1] - StationxyzTrac[1];
+  RightIncxyzTrac[2] = RightIncxyzTrac[2] - StationxyzTrac[2];
   /* 警告点位点计算 */
   xyzTracGene(warnPointWorld,AttiOri,WarnxyzTrac[0],WarnxyzTrac[1],WarnxyzTrac[2]);
   /* 判断兑换站位点是否超限 */
@@ -253,16 +263,6 @@ uint8_t SLPClassdef::Calculate()
       return 1;
   }
 
-  /* 向上增量计算 */
-  xyzTracGene(stationUpIncWorld, AttiOri, UpIncxyzTrac[0], UpIncxyzTrac[1], UpIncxyzTrac[2]);
-  UpIncxyzTrac[0] = UpIncxyzTrac[0] - StationxyzTrac[0];
-  UpIncxyzTrac[1] = UpIncxyzTrac[1] - StationxyzTrac[1];
-  UpIncxyzTrac[2] = UpIncxyzTrac[2] - StationxyzTrac[2];
-  /* 向右增量计算 */
-  xyzTracGene(stationRightIncWorld, AttiOri, RightIncxyzTrac[0], RightIncxyzTrac[1], RightIncxyzTrac[2]);
-  RightIncxyzTrac[0] = RightIncxyzTrac[0] - StationxyzTrac[0];
-  RightIncxyzTrac[1] = RightIncxyzTrac[1] - StationxyzTrac[1];
-  RightIncxyzTrac[2] = RightIncxyzTrac[2] - StationxyzTrac[2];
 }
 
 /**
@@ -434,7 +434,7 @@ uint8_t SLPClassdef::decSurfaceCal(float endEffGoal[3])
 bool SLPClassdef::midPointCal()
 {
   surfaceRes = decSurfaceCal(endEffGoal);
-  if (SLP_NP::abs(endEffGoal[1]) <= 0.144 + safeR && SLP_NP::abs(endEffGoal[2]) <= 0.144 + safeR)
+  if (SLP_NP::abs(endEffGoal[1]) <= 0.144f + safeR && SLP_NP::abs(endEffGoal[2]) <= 0.144f + safeR)
   {
     midGoal[0] = -safeR;
     midGoal[1] = endEffGoal[1];
