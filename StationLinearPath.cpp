@@ -210,59 +210,32 @@ uint8_t SLPClassdef::Calculate()
   RightIncxyzTrac[2] = RightIncxyzTrac[2] - StationxyzTrac[2];
   /* 警告点位点计算 */
   xyzTracGene(warnPointWorld,AttiOri,WarnxyzTrac[0],WarnxyzTrac[1],WarnxyzTrac[2]);
-  /* 判断兑换站位点是否超限 */
-  if (false == limitCheck(StationxyzTrac[0], StationxyzTrac[1], StationxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-  {
-    /* 判断警告点是否超限 */
-    if (false == limitCheck(WarnxyzTrac[0], WarnxyzTrac[1], WarnxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      return 0;
-    else
-    {
-      /* 终点计算 */
-      xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
-      /* 判断终点是否超限 */
-      if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      {
-        if(false == attiCheck(AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-          return 0;
-        else
-          return 3;
-      }
 
-      // /* 计算中间点 */
-      // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-      // /* 如果中间点无解，直接返回错误 */
-      // if (!midPointCal())
-      //   return 0;
-      // xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
-      // /* 判断中间点是否超限 */
-      // if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      //   return 0;
-      else
-        return 2; // 兑换站不可达，但警告点可达，返回警告
-    }
-  }
-  else
+  /* 判断兑换站位点是否超限 */
+  if(true == limitCheck(StationxyzTrac[0], StationxyzTrac[1], StationxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
   {
     /* 终点计算 */
     xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
     /* 判断终点是否超限 */
-    if (false == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-      return 0;
-
-    // /* 计算中间点 */
-    // endEffLocCal(AttiTrac[0], AttiTrac[1], AttiTrac[2]);
-    // /* 如果中间点无解，直接返回错误 */
-    // if (!midPointCal())
-    //   return 0;
-    // xyzTracGene(midWorld, AttiOri, MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2]);
-    // /* 判断中间点是否超限 */
-    // if (false == limitCheck(MidxyzTrac[0], MidxyzTrac[1], MidxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
-    //   return 0;
-    else
+    if (true == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
       return 1;
   }
-
+  else
+  {
+    /* 判断警告点是否超限 */
+    if (true == limitCheck(WarnxyzTrac[0], WarnxyzTrac[1], WarnxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+    {
+      /* 终点计算 */
+      xyzTracGene(goalWorld, AttiOri, GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2]);
+      /* 判断终点是否超限 */
+      if (true == limitCheck(GoalxyzTrac[0], GoalxyzTrac[1], GoalxyzTrac[2], AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+        return 2;
+    }
+  }
+  if (true == attiCheck(AttiTrac[0], AttiTrac[1], AttiTrac[2]))
+    return 3;
+  else
+    return 0;
 }
 
 /**
