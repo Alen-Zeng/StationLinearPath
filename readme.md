@@ -4,6 +4,8 @@
 | -------- | ------------------------------ | -------------------------- | ---------- |
 | 电控方案 | 视觉辅助自动兑换的电控驱动部分 | 视觉辅助兑换的电控驱动方案 | 曾熙朗     |
 
+> 由于此readme涉及到Latex公式，强烈建议使用Typora打开进行阅读。
+
 # 背景
 
 ​		23赛季工程兑换难度增大，在经过分区赛的尝试和国赛的规则改动后，所有的队伍都可以兑换最高等级的矿石。在此情景下，充分缩短兑换时间是提高赛场队伍作战能力的重要战略。缩短兑换时间的方法目前有2种，一种是使用自定义控制器由操作手手动兑换，另一种方案是通过视觉对兑换站的灯条进行识别从而驱动机械臂自动兑换。采用第二种方案的原因是，自定义控制器的表现始终取决于操作手的赛场表现，有较大的不确定性，而视觉自动兑换仅取决于硬件的稳定性和算法的稳定性，在保证稳定性的情况下，可以充分保证赛场的表现，并减轻操作手的赛场负担。
@@ -53,19 +55,19 @@ StationLinearPath:.
 
 设车身机器人坐标W、车身相机坐标C、目标机器人坐标G、目标相机坐标A
 
-$$ _{C}^{W} T=\begin{bmatrix}  0& 0& 1& 0\\ -1& 0& 0& 0\\  0&-1& 0& 0\\  0& 0& 0& 1 \end{bmatrix} $$
+$$ {_{C}^{W} T=\begin{bmatrix}  0& 0& 1& 0\\ -1& 0& 0& 0\\  0&-1& 0& 0\\  0& 0& 0& 1 \end{bmatrix} }$$
 
-$$ _{A}^{C} T=\begin{bmatrix} r_{11}&r_{12}&r_{13}&p_{x}\\ r_{21}&r_{22}&r_{23}&p_{y}\\ r_{31}&r_{32}&r_{33}&p_{z}\\      0&     0&     0& 1 \end{bmatrix} $$
+$${ _{A}^{C} T=\begin{bmatrix} r_{11}&r_{12}&r_{13}&p_{x}\\ r_{21}&r_{22}&r_{23}&p_{y}\\ r_{31}&r_{32}&r_{33}&p_{z}\\      0&     0&     0& 1 \end{bmatrix} }$$
 
-$$ _{G}^{A} T=\begin{bmatrix}  0&-1& 0& 0\\  0& 0&-1& 0\\  1& 0& 0& 0\\  0& 0& 0& 1 \end{bmatrix} $$
-
-从而
-
-$$ _{G}^{W} T={_{C}^{W}T} \space {_{A}^{C}T} \space {_{G}^{A}T} =\begin{bmatrix}  r_{33}&-r_{31}&-r_{32}& p_{z}\\ -r_{13}& r_{11}& r_{12}&-p_{x}\\ -r_{23}& r_{21}& r_{22}&-p_{y}\\  0& 0& 0& 1 \end{bmatrix} $$
+$${ _{G}^{A} T=\begin{bmatrix}  0&-1& 0& 0\\  0& 0&-1& 0\\  1& 0& 0& 0\\  0& 0& 0& 1 \end{bmatrix} }$$
 
 从而
 
-$$ _{W}^{G} T=\begin{bmatrix}  r_{33}&-r_{13}&-r_{23}& p_{y}r_{13} - p_{x}r_{33} + p_{z}r_{23}\\ -r_{31}& r_{11}& r_{21}& p_{x}r_{31} - p_{y}r_{11} - p_{z}r_{21}\\ -r_{32}& r_{12}& r_{22}& p_{x}r_{32} - p_{y}r_{12} - p_{z}r_{22}\\  0& 0& 0& 1 \end{bmatrix} $$
+$${ _{G}^{W} T={_{C}^{W}T} \space {_{A}^{C}T} \space {_{G}^{A}T} =\begin{bmatrix}  r_{33}&-r_{31}&-r_{32}& p_{z}\\ -r_{13}& r_{11}& r_{12}&-p_{x}\\ -r_{23}& r_{21}& r_{22}&-p_{y}\\  0& 0& 0& 1 \end{bmatrix}} $$
+
+从而
+
+$${ _{W}^{G} T=\begin{bmatrix}  r_{33}&-r_{13}&-r_{23}& p_{y}r_{13} - p_{x}r_{33} + p_{z}r_{23}\\ -r_{31}& r_{11}& r_{21}& p_{x}r_{31} - p_{y}r_{11} - p_{z}r_{21}\\ -r_{32}& r_{12}& r_{22}& p_{x}r_{32} - p_{y}r_{12} - p_{z}r_{22}\\  0& 0& 0& 1 \end{bmatrix} }$$
 
 1. 为了减少通信数据量，兑换站姿态数据采用四元数的方式进行传输，因此，需要将四元数数据转换为旋转矩阵数据，方便后期直观地对姿态进行控制：
 
@@ -86,7 +88,7 @@ void SLPClassdef::quaCoord2TMatrix(float qx, float qy, float qz, float qw, float
 
 1. 为直观考虑，以兑换站的前表面中心为原点，向内为X轴，向左为Y轴，向上为Z轴，建立坐标系。兑换站尺寸：288x288x288mm。
 
-![img](https://scutrobotlab.feishu.cn/space/api/box/stream/download/asynccode/?code=NGVmMWJiZDZmNDQ4NjQ1MmZhNGQ0MDZiYjQwZGI2NmFfNlh5OVh1akdCVVZLSGpwZXhUYzRFcW05QldUSkptMzFfVG9rZW46SkIxY2I0OFhDb1dQTEZ4Y2JZd2N2Sk9SbjhnXzE2OTM0MDYzODM6MTY5MzQwOTk4M19WNA)
+![img](兑换站路径解算文档/兑换站坐标系.png)
 
 从而需要知道两个坐标系之间的转换关系为：
 
